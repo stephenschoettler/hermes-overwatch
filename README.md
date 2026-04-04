@@ -1,8 +1,18 @@
 # 👁️ Overwatch
 
-A local operations dashboard for [Hermes Agent](https://github.com/hermes-agent/hermes-agent).
+A local dashboard for [Hermes Agent](https://github.com/hermes-agent/hermes-agent).
 
-Monitor sessions, browse history, inspect cron activity, view skills and memory, and track token costs — all from one place.
+It gives you one place to inspect sessions, analytics, tools, automation, memory, config, and system state from your local Hermes installation.
+
+What it is:
+- a read-only UI over Hermes data
+- useful for seeing what Hermes has been doing
+- meant to run locally, next to your agent data
+
+What it is not:
+- a hosted multi-user control plane
+- a hardened internet-facing admin panel
+- a replacement for Hermes itself
 
 ---
 
@@ -21,12 +31,11 @@ This repo intentionally does not ship live dashboard screenshots until they are 
 
 ## Features
 
-- **Session Browser** — search and browse conversation history with full transcript viewer
-- **Cron Visibility** — inspect scheduled jobs, timing, status, and recent outputs
-- **Skills Browser** — explore installed skills by category
-- **Memory Viewer** — see agent memory and user profile
-- **Config Viewer** — read-only config display with automatic secret redaction
-- **System Status** — health checks, disk usage, process info
+- **Overview + analytics** — usage totals, activity patterns, models, and tool usage
+- **Session browser** — search history and open full transcripts
+- **Automation visibility** — inspect cron jobs, delegation, delivery targets, and recent outputs
+- **Memory + skills** — browse agent memory, user profile, and installed skills
+- **Config + system** — inspect redacted config, service health, logs, and machine status
 
 ---
 
@@ -47,9 +56,9 @@ npm run build
 npm start
 ```
 
-Overwatch will be available at **http://localhost:3333**.
+Overwatch will be available at `http://localhost:3333`.
 
-It reads from `~/.hermes` by default. Set `HERMES_HOME` to point to a different Hermes installation.
+By default it reads from `~/.hermes`. Set `HERMES_HOME` if your Hermes installation lives somewhere else.
 
 ---
 
@@ -90,8 +99,8 @@ Runs on port 3333 in dev mode with hot reload.
 
 - **Next.js 14** (App Router) — frontend + API routes
 - **Tailwind CSS** — dark theme UI
-- **better-sqlite3** — reads directly from Hermes `state.db` (read-only)
-- **No external database** — all data comes from the local `~/.hermes` directory
+- **better-sqlite3** — direct read-only access to Hermes `state.db`
+- **No external database** — everything comes from the local Hermes home directory
 
 ### Data Sources
 
