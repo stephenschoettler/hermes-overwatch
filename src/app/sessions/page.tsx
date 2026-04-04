@@ -319,9 +319,6 @@ export default function SessionsPage() {
                         {s.id.slice(0, 8)} · {s.message_count} msgs · {s.tool_call_count} tools
                       </p>
                     </div>
-                    {isActive && (
-                      <div className="w-2 h-2 rounded-full bg-green-400 pulse-dot flex-shrink-0" />
-                    )}
                   </div>
 
                   {/* Model */}
@@ -349,9 +346,16 @@ export default function SessionsPage() {
 
                   {/* Type badge */}
                   <div className="hidden sm:flex justify-center">
-                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded border ${type.color}`}>
-                      {type.label}
-                    </span>
+                    {isActive ? (
+                      <span className="flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded border bg-green-400/10 text-green-400 border-green-400/30">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot" />
+                        ACTIVE
+                      </span>
+                    ) : (
+                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded border ${type.color}`}>
+                        {type.label}
+                      </span>
+                    )}
                   </div>
 
                   {/* Last Active */}
@@ -362,7 +366,14 @@ export default function SessionsPage() {
 
                   {/* Mobile summary */}
                   <div className="sm:hidden flex items-center gap-2 text-[10px] text-neutral-600">
-                    <span className={`font-bold px-1.5 py-0.5 rounded border ${type.color}`}>{type.label}</span>
+                    {isActive ? (
+                      <span className="flex items-center gap-1 font-bold px-1.5 py-0.5 rounded border bg-green-400/10 text-green-400 border-green-400/30">
+                        <span className="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot" />
+                        ACTIVE
+                      </span>
+                    ) : (
+                      <span className={`font-bold px-1.5 py-0.5 rounded border ${type.color}`}>{type.label}</span>
+                    )}
                     <span>{shortModel(s.model)}</span>
                     <span>·</span>
                     <span>{formatTokens(totalTokens)}</span>
