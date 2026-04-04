@@ -31,30 +31,30 @@ const SECTION_META: Record<string, { label: string; icon: React.ReactNode; descr
 
 function renderValue(value: unknown, depth = 0): React.ReactNode {
   if (value === null || value === undefined) {
-    return <span className="text-ctp-surface2">null</span>;
+    return <span className="text-neutral-700">null</span>;
   }
   if (typeof value === 'boolean') {
-    return <span className={value ? 'text-ctp-green' : 'text-ctp-red'}>{String(value)}</span>;
+    return <span className={value ? 'text-green-400' : 'text-red-400'}>{String(value)}</span>;
   }
   if (typeof value === 'number') {
-    return <span className="text-ctp-yellow">{value}</span>;
+    return <span className="text-amber-400">{value}</span>;
   }
   if (typeof value === 'string') {
     if (value === '••••••••') {
-      return <span className="text-ctp-red/50 italic">••••••••</span>;
+      return <span className="text-red-400/50 italic">••••••••</span>;
     }
     if (value === '') {
-      return <span className="text-ctp-surface2">""</span>;
+      return <span className="text-neutral-700">""</span>;
     }
-    return <span className="text-ctp-green">{value}</span>;
+    return <span className="text-green-400">{value}</span>;
   }
   if (Array.isArray(value)) {
-    if (value.length === 0) return <span className="text-ctp-surface2">[]</span>;
+    if (value.length === 0) return <span className="text-neutral-700">[]</span>;
     if (value.every(v => typeof v === 'string') && value.length <= 8) {
       return (
         <span className="flex flex-wrap gap-1">
           {value.map((v, i) => (
-            <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-ctp-mauve/10 text-ctp-mauve border border-ctp-mauve/30">
+            <span key={i} className="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/10 text-purple-400 border border-indigo-500/20">
               {String(v)}
             </span>
           ))}
@@ -65,7 +65,7 @@ function renderValue(value: unknown, depth = 0): React.ReactNode {
       <div className="ml-3 space-y-0.5">
         {value.map((v, i) => (
           <div key={i} className="flex items-start gap-1">
-            <span className="text-ctp-surface2 text-[10px] mt-0.5">-</span>
+            <span className="text-neutral-700 text-[10px] mt-0.5">-</span>
             {renderValue(v, depth + 1)}
           </div>
         ))}
@@ -74,19 +74,19 @@ function renderValue(value: unknown, depth = 0): React.ReactNode {
   }
   if (typeof value === 'object') {
     const entries = Object.entries(value as Record<string, unknown>);
-    if (entries.length === 0) return <span className="text-ctp-surface2">{'{}'}</span>;
+    if (entries.length === 0) return <span className="text-neutral-700">{'{}'}</span>;
     return (
       <div className={depth > 0 ? 'ml-3' : ''}>
         {entries.map(([k, v]) => (
           <div key={k} className="flex items-start gap-2 py-0.5">
-            <span className="text-ctp-overlay1 text-[11px] font-mono flex-shrink-0">{k}:</span>
+            <span className="text-neutral-500 text-[11px] font-mono flex-shrink-0">{k}:</span>
             <div className="flex-1 min-w-0 text-[11px] font-mono">{renderValue(v, depth + 1)}</div>
           </div>
         ))}
       </div>
     );
   }
-  return <span className="text-ctp-overlay2">{String(value)}</span>;
+  return <span className="text-neutral-400">{String(value)}</span>;
 }
 
 function ConfigSection({ sectionKey, data, defaultOpen = false }: {
@@ -99,23 +99,23 @@ function ConfigSection({ sectionKey, data, defaultOpen = false }: {
   const entryCount = Object.keys(data).length;
 
   return (
-    <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 overflow-hidden">
+    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center gap-3 px-5 py-3 hover:bg-ctp-surface0/30 transition-colors"
+        className="w-full flex items-center gap-3 px-5 py-3 hover:bg-white/[0.02] transition-colors"
       >
-        <div className="w-7 h-7 rounded-lg bg-ctp-surface0/50 border border-ctp-surface0 flex items-center justify-center text-ctp-overlay2">
+        <div className="w-7 h-7 rounded-lg bg-white/[0.04] border border-white/[0.06] flex items-center justify-center text-neutral-400">
           {meta.icon}
         </div>
         <div className="flex-1 text-left">
-          <p className="text-sm font-medium text-ctp-subtext1">{meta.label}</p>
-          {meta.description && <p className="text-[10px] text-ctp-overlay0">{meta.description}</p>}
+          <p className="text-sm font-medium text-neutral-200">{meta.label}</p>
+          {meta.description && <p className="text-[10px] text-neutral-600">{meta.description}</p>}
         </div>
-        <span className="text-[10px] text-ctp-overlay0 font-mono">{entryCount} keys</span>
-        {expanded ? <ChevronDown size={13} className="text-ctp-overlay0" /> : <ChevronRight size={13} className="text-ctp-overlay0" />}
+        <span className="text-[10px] text-neutral-600 font-mono">{entryCount} keys</span>
+        {expanded ? <ChevronDown size={13} className="text-neutral-600" /> : <ChevronRight size={13} className="text-neutral-600" />}
       </button>
       {expanded && (
-        <div className="px-5 pb-4 border-t border-ctp-surface0/50">
+        <div className="px-5 pb-4 border-t border-white/[0.06]/50">
           <div className="mt-3">
             {renderValue(data)}
           </div>
@@ -144,9 +144,9 @@ export default function ConfigPage() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto animate-pulse">
-        <div className="h-8 bg-ctp-surface0/50 rounded-lg w-48 mb-6" />
+        <div className="h-8 bg-white/[0.04] rounded-lg w-48 mb-6" />
         <div className="space-y-3">
-          {[...Array(6)].map((_, i) => <div key={i} className="h-14 bg-ctp-surface0/40 rounded-xl" />)}
+          {[...Array(6)].map((_, i) => <div key={i} className="h-14 bg-white/[0.03] rounded-xl" />)}
         </div>
       </div>
     );
@@ -163,19 +163,19 @@ export default function ConfigPage() {
     <div className="max-w-4xl mx-auto">
       <div className="flex items-center justify-between mb-5">
         <div>
-          <div className="flex items-center gap-3"><Settings size={20} className="text-ctp-mauve" /><h1 className="text-xl font-bold text-ctp-text">Config</h1></div>
-          <p className="text-sm text-ctp-overlay1 mt-0.5">
+          <div className="flex items-center gap-3"><Settings size={20} className="text-purple-400" /><h1 className="text-xl font-bold text-white">Config</h1></div>
+          <p className="text-sm text-neutral-500 mt-0.5">
             config.yaml · version {data.configVersion || '?'} · {data.mcpServerNames.length} MCP servers
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-ctp-surface0/40 border border-ctp-surface0">
-            <Shield size={11} className="text-ctp-green" />
-            <span className="text-[10px] text-ctp-overlay2">Secrets redacted</span>
+          <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-white/[0.03] border border-white/[0.06]">
+            <Shield size={11} className="text-green-400" />
+            <span className="text-[10px] text-neutral-400">Secrets redacted</span>
           </div>
           <button
             onClick={() => setShowRaw(!showRaw)}
-            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] text-ctp-overlay1 hover:text-ctp-subtext0 hover:bg-ctp-surface1/40 transition-all"
+            className="flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] text-neutral-500 hover:text-neutral-300 hover:bg-white/[0.06] transition-all"
           >
             {showRaw ? <EyeOff size={11} /> : <Eye size={11} />}
             {showRaw ? 'Sections' : 'Raw YAML'}
@@ -184,8 +184,8 @@ export default function ConfigPage() {
       </div>
 
       {showRaw ? (
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-5">
-          <pre className="text-[11px] font-mono text-ctp-subtext0 bg-black/20 rounded-lg p-4 overflow-auto max-h-[70vh] whitespace-pre-wrap leading-relaxed">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
+          <pre className="text-[11px] font-mono text-neutral-300 bg-black/20 rounded-lg p-4 overflow-auto max-h-[70vh] whitespace-pre-wrap leading-relaxed">
             {JSON.stringify(data.full, null, 2)}
           </pre>
         </div>

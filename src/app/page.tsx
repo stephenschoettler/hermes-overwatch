@@ -82,22 +82,22 @@ function timeAgo(dateStr: string): string {
 
 function sourceColor(source: string): string {
   switch (source) {
-    case 'cli': return 'text-ctp-mauve bg-ctp-mauve/10 border-ctp-mauve/20';
-    case 'telegram': return 'text-ctp-sky bg-ctp-sky/10 border-ctp-sky/20';
-    case 'cron': return 'text-ctp-yellow bg-ctp-yellow/10 border-ctp-yellow/20';
-    default: return 'text-ctp-overlay2 bg-ctp-overlay2/10 border-ctp-overlay2/20';
+    case 'cli': return 'text-purple-400 bg-indigo-500/10 border-indigo-400/20';
+    case 'telegram': return 'text-sky-400 bg-sky-400/10 border-sky-400/20';
+    case 'cron': return 'text-amber-400 bg-amber-400/10 border-amber-400/20';
+    default: return 'text-neutral-400 bg-neutral-400/10 border-neutral-400/20';
   }
 }
 
 function StatusDot({ ok }: { ok: boolean }) {
   return (
-    <div className={`w-2 h-2 rounded-full ${ok ? 'bg-ctp-green pulse-dot' : 'bg-ctp-red'}`} />
+    <div className={`w-2 h-2 rounded-full ${ok ? 'bg-green-400 pulse-dot' : 'bg-red-500'}`} />
   );
 }
 
 // Simple bar chart for daily activity
 function ActivityBars({ data }: { data: Stats['dailyActivity'] }) {
-  if (!data.length) return <p className="text-ctp-overlay0 text-xs">No data</p>;
+  if (!data.length) return <p className="text-neutral-600 text-xs">No data</p>;
   const max = Math.max(1, ...data.map(d => d.messages));
   const barMaxPx = 56; // max bar height in pixels
 
@@ -109,11 +109,11 @@ function ActivityBars({ data }: { data: Stats['dailyActivity'] }) {
         return (
           <div key={d.day} className="flex-1 flex flex-col items-center justify-end gap-1 h-full">
             <div
-              className="w-full bg-ctp-mauve/40 hover:bg-ctp-mauve/60 rounded-sm transition-all cursor-default"
+              className="w-full bg-indigo-500/40 hover:bg-indigo-500/60 rounded-sm transition-all cursor-default"
               style={{ height: `${barH}px` }}
               title={`${d.day}: ${d.sessions} sessions, ${d.messages} messages, ${d.tool_calls} tools`}
             />
-            <span className="text-[9px] text-ctp-overlay0">{dayLabel}</span>
+            <span className="text-[9px] text-neutral-600">{dayLabel}</span>
           </div>
         );
       })}
@@ -143,8 +143,8 @@ export default function OverviewPage() {
   if (error) {
     return (
       <div className="max-w-5xl mx-auto">
-        <div className="rounded-xl border border-ctp-red/20 bg-ctp-red/5 p-6 text-center">
-          <p className="text-ctp-red text-sm">{error}</p>
+        <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-6 text-center">
+          <p className="text-red-400 text-sm">{error}</p>
         </div>
       </div>
     );
@@ -153,9 +153,9 @@ export default function OverviewPage() {
   if (!stats) {
     return (
       <div className="max-w-5xl mx-auto animate-pulse">
-        <div className="h-8 bg-ctp-surface0/50 rounded-lg w-48 mb-6" />
+        <div className="h-8 bg-white/[0.04] rounded-lg w-48 mb-6" />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-6">
-          {[...Array(4)].map((_, i) => <div key={i} className="h-24 bg-ctp-surface0/40 rounded-xl" />)}
+          {[...Array(4)].map((_, i) => <div key={i} className="h-24 bg-white/[0.03] rounded-xl" />)}
         </div>
       </div>
     );
@@ -168,8 +168,8 @@ export default function OverviewPage() {
       {/* Header with config info */}
       <div className="flex items-center justify-between">
         <div>
-          <div className="flex items-center gap-3"><LayoutDashboard size={20} className="text-ctp-mauve" /><h1 className="text-xl font-bold text-ctp-text">Overview</h1></div>
-          <p className="text-sm text-ctp-overlay1 mt-0.5">
+          <div className="flex items-center gap-3"><LayoutDashboard size={20} className="text-purple-400" /><h1 className="text-xl font-bold text-white">Overview</h1></div>
+          <p className="text-sm text-neutral-500 mt-0.5">
             {stats.config.model} · {stats.config.provider}
           </p>
         </div>
@@ -213,16 +213,16 @@ export default function OverviewPage() {
       {/* Middle row: Activity + Models + Crons + Sources */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Daily activity */}
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
-          <p className="text-xs font-medium text-ctp-overlay2 mb-3">Daily Activity</p>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="text-xs font-medium text-neutral-400 mb-3">Daily Activity</p>
           <ActivityBars data={stats.dailyActivity} />
         </div>
 
         {/* Models */}
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-medium text-ctp-overlay2">Models</p>
-            <Link href="/models" className="text-[10px] text-ctp-mauve hover:text-ctp-lavender flex items-center gap-1">
+            <p className="text-xs font-medium text-neutral-400">Models</p>
+            <Link href="/models" className="text-[10px] text-purple-400 hover:text-indigo-300 flex items-center gap-1">
               View all <ArrowRight size={9} />
             </Link>
           </div>
@@ -233,11 +233,11 @@ export default function OverviewPage() {
                 <div key={m.model} className="flex items-center gap-2">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between mb-1">
-                      <span className="text-xs text-ctp-subtext0 truncate">{shortModel(m.model)}</span>
-                      <span className="text-[10px] text-ctp-overlay1">{m.count}</span>
+                      <span className="text-xs text-neutral-300 truncate">{shortModel(m.model)}</span>
+                      <span className="text-[10px] text-neutral-500">{m.count}</span>
                     </div>
-                    <div className="h-1 bg-ctp-surface0/50 rounded-full overflow-hidden">
-                      <div className="h-full bg-ctp-mauve/50 rounded-full" style={{ width: `${pct}%` }} />
+                    <div className="h-1 bg-white/[0.04] rounded-full overflow-hidden">
+                      <div className="h-full bg-indigo-500/50 rounded-full" style={{ width: `${pct}%` }} />
                     </div>
                   </div>
                 </div>
@@ -247,10 +247,10 @@ export default function OverviewPage() {
         </div>
 
         {/* Crons */}
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-medium text-ctp-overlay2">Crons</p>
-            <Link href="/automation" className="text-[10px] text-ctp-mauve hover:text-ctp-lavender flex items-center gap-1">
+            <p className="text-xs font-medium text-neutral-400">Crons</p>
+            <Link href="/automation" className="text-[10px] text-purple-400 hover:text-indigo-300 flex items-center gap-1">
               Manage <ArrowRight size={9} />
             </Link>
           </div>
@@ -258,24 +258,24 @@ export default function OverviewPage() {
             {stats.crons.jobs.map(j => (
               <div key={j.name} className="flex items-center justify-between">
                 <div className="min-w-0">
-                  <p className="text-xs text-ctp-subtext0 truncate">{j.name}</p>
-                  <p className="text-[10px] text-ctp-overlay0">{j.schedule}</p>
+                  <p className="text-xs text-neutral-300 truncate">{j.name}</p>
+                  <p className="text-[10px] text-neutral-600">{j.schedule}</p>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
-                  <div className={`w-1.5 h-1.5 rounded-full ${j.lastStatus === 'ok' ? 'bg-ctp-green' : j.lastStatus === 'error' ? 'bg-ctp-red' : 'bg-ctp-overlay0'}`} />
-                  <span className="text-[10px] text-ctp-overlay1">{j.lastStatus || '—'}</span>
+                  <div className={`w-1.5 h-1.5 rounded-full ${j.lastStatus === 'ok' ? 'bg-green-400' : j.lastStatus === 'error' ? 'bg-red-500' : 'bg-neutral-600'}`} />
+                  <span className="text-[10px] text-neutral-500">{j.lastStatus || '—'}</span>
                 </div>
               </div>
             ))}
             {stats.crons.jobs.length === 0 && (
-              <p className="text-xs text-ctp-overlay0">No cron jobs</p>
+              <p className="text-xs text-neutral-600">No cron jobs</p>
             )}
           </div>
         </div>
 
         {/* Sources */}
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
-          <p className="text-xs font-medium text-ctp-overlay2 mb-3">Sources</p>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="text-xs font-medium text-neutral-400 mb-3">Sources</p>
           <div className="space-y-2">
             {stats.sources.map(s => (
               <div key={s.source} className="flex items-center justify-between">
@@ -284,7 +284,7 @@ export default function OverviewPage() {
                     {s.source}
                   </span>
                 </div>
-                <span className="text-sm font-mono text-ctp-subtext0">{s.count}</span>
+                <span className="text-sm font-mono text-neutral-300">{s.count}</span>
               </div>
             ))}
           </div>
@@ -294,10 +294,10 @@ export default function OverviewPage() {
       {/* Bottom row: Recent activity + Recent sessions + System */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-3">
         {/* Recent activity */}
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-medium text-ctp-overlay2">Recent Activity</p>
-            <Link href="/activity" className="text-[10px] text-ctp-mauve hover:text-ctp-lavender flex items-center gap-1">
+            <p className="text-xs font-medium text-neutral-400">Recent Activity</p>
+            <Link href="/activity" className="text-[10px] text-purple-400 hover:text-indigo-300 flex items-center gap-1">
               View all <ArrowRight size={10} />
             </Link>
           </div>
@@ -305,10 +305,10 @@ export default function OverviewPage() {
         </div>
 
         {/* Recent sessions */}
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
           <div className="flex items-center justify-between mb-3">
-            <p className="text-xs font-medium text-ctp-overlay2">Recent Sessions</p>
-            <Link href="/sessions" className="text-[10px] text-ctp-mauve hover:text-ctp-lavender flex items-center gap-1">
+            <p className="text-xs font-medium text-neutral-400">Recent Sessions</p>
+            <Link href="/sessions" className="text-[10px] text-purple-400 hover:text-indigo-300 flex items-center gap-1">
               View all <ArrowRight size={10} />
             </Link>
           </div>
@@ -317,15 +317,15 @@ export default function OverviewPage() {
               <Link
                 key={s.id}
                 href={`/session/${s.id}`}
-                className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-ctp-surface1/30 transition-colors"
+                className="flex items-center gap-2 px-2 py-1.5 rounded-lg hover:bg-white/[0.04] transition-colors"
               >
                 <span className={`text-[9px] font-medium px-1 py-0.5 rounded border flex-shrink-0 ${sourceColor(s.source)}`}>
                   {s.source}
                 </span>
-                <span className="text-xs text-ctp-subtext0 truncate flex-1 min-w-0">
+                <span className="text-xs text-neutral-300 truncate flex-1 min-w-0">
                   {s.title || s.id}
                 </span>
-                <span className="text-[10px] text-ctp-overlay1 flex-shrink-0">
+                <span className="text-[10px] text-neutral-500 flex-shrink-0">
                   {timeAgo(s.started_at)}
                 </span>
               </Link>
@@ -334,8 +334,8 @@ export default function OverviewPage() {
         </div>
 
         {/* System panel */}
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
-          <p className="text-xs font-medium text-ctp-overlay2 mb-3">System</p>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="text-xs font-medium text-neutral-400 mb-3">System</p>
           <div className="space-y-2.5 text-xs">
             <SysRow label="Gateway" value={gatewayOk ? `PID ${stats.gateway.pid}` : 'offline'} ok={gatewayOk} />
             {stats.gateway.process?.uptime && (
@@ -350,7 +350,7 @@ export default function OverviewPage() {
             {Object.entries(stats.gateway.platforms).map(([name, info]) => (
               <SysRow key={name} label={name} value={info.state || 'unknown'} ok={info.state === 'connected'} />
             ))}
-            <div className="border-t border-ctp-surface0/50 pt-2 mt-2" />
+            <div className="border-t border-white/[0.06]/50 pt-2 mt-2" />
             <SysRow label="MCP Servers" value={String(stats.config.mcpServers.length)} />
             <SysRow label="state.db" value={`${stats.dbSizeMb} MB`} />
           </div>
@@ -365,22 +365,22 @@ function MetricCard({ label, value, sub, icon, color }: {
   icon: React.ReactNode; color: string;
 }) {
   const colors: Record<string, string> = {
-    indigo: 'text-ctp-mauve bg-ctp-lavender/10',
-    blue: 'text-ctp-blue bg-ctp-blue/10',
-    purple: 'text-ctp-mauve bg-ctp-mauve/10',
-    green: 'text-ctp-green bg-ctp-green/10',
+    indigo: 'text-purple-400 bg-indigo-400/10',
+    blue: 'text-blue-400 bg-blue-400/10',
+    purple: 'text-purple-400 bg-indigo-500/10',
+    green: 'text-green-400 bg-green-400/10',
   };
 
   return (
-    <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
+    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
       <div className="flex items-center gap-2 mb-2">
         <div className={`w-7 h-7 rounded-lg flex items-center justify-center ${colors[color]}`}>
           {icon}
         </div>
-        <span className="text-[11px] font-medium text-ctp-overlay1">{label}</span>
+        <span className="text-[11px] font-medium text-neutral-500">{label}</span>
       </div>
-      <p className="text-2xl font-bold text-ctp-text">{value}</p>
-      <p className="text-[11px] text-ctp-overlay1 mt-0.5">{sub}</p>
+      <p className="text-2xl font-bold text-white">{value}</p>
+      <p className="text-[11px] text-neutral-500 mt-0.5">{sub}</p>
     </div>
   );
 }
@@ -411,7 +411,7 @@ function RecentActivity() {
   }, []);
 
   if (events.length === 0) {
-    return <p className="text-ctp-overlay0 text-xs">No recent activity</p>;
+    return <p className="text-neutral-600 text-xs">No recent activity</p>;
   }
 
   return (
@@ -419,19 +419,19 @@ function RecentActivity() {
       {events.map((e, i) => (
         <div key={`${e.session_id}-${e.type}-${i}`} className="flex items-center gap-2 px-1 py-1">
           <span className="flex-shrink-0">
-            {e.type === 'session_start' ? <Play size={9} className="text-ctp-green" /> :
-             e.type === 'session_end' ? <Square size={9} className="text-ctp-overlay0" /> :
-             e.type === 'cron_run' ? <Zap size={9} className="text-ctp-yellow" /> :
-             <Radio size={9} className="text-ctp-overlay0" />}
+            {e.type === 'session_start' ? <Play size={9} className="text-green-400" /> :
+             e.type === 'session_end' ? <Square size={9} className="text-neutral-600" /> :
+             e.type === 'cron_run' ? <Zap size={9} className="text-amber-400" /> :
+             <Radio size={9} className="text-neutral-600" />}
           </span>
           {e.session_id ? (
-            <Link href={`/session/${e.session_id}`} className="text-[11px] text-ctp-overlay2 hover:text-ctp-subtext1 truncate flex-1">
+            <Link href={`/session/${e.session_id}`} className="text-[11px] text-neutral-400 hover:text-neutral-200 truncate flex-1">
               {e.title}
             </Link>
           ) : (
-            <span className="text-[11px] text-ctp-overlay2 truncate flex-1">{e.title}</span>
+            <span className="text-[11px] text-neutral-400 truncate flex-1">{e.title}</span>
           )}
-          <span className="text-[9px] text-ctp-overlay0 font-mono flex-shrink-0">
+          <span className="text-[9px] text-neutral-600 font-mono flex-shrink-0">
             {e.timestamp.split(' ')[1]?.slice(0, 5) || ''}
           </span>
         </div>
@@ -443,10 +443,10 @@ function RecentActivity() {
 function SysRow({ label, value, ok }: { label: string; value: string; ok?: boolean }) {
   return (
     <div className="flex items-center justify-between">
-      <span className="text-ctp-overlay1">{label}</span>
+      <span className="text-neutral-500">{label}</span>
       <div className="flex items-center gap-1.5">
         {ok !== undefined && <StatusDot ok={ok} />}
-        <span className="text-ctp-subtext0 font-mono text-[11px]">{value}</span>
+        <span className="text-neutral-300 font-mono text-[11px]">{value}</span>
       </div>
     </div>
   );

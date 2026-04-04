@@ -57,10 +57,10 @@ function shortModel(m: string): string {
 
 function sourceColor(source: string): string {
   switch (source) {
-    case 'cli': return 'text-ctp-blue bg-ctp-blue/10 border-ctp-blue/20';
-    case 'telegram': return 'text-ctp-sky bg-ctp-sky/10 border-ctp-sky/20';
-    case 'cron': return 'text-ctp-yellow bg-ctp-yellow/10 border-ctp-yellow/20';
-    default: return 'text-ctp-overlay2 bg-ctp-overlay2/10 border-ctp-overlay2/20';
+    case 'cli': return 'text-blue-400 bg-blue-400/10 border-blue-400/20';
+    case 'telegram': return 'text-sky-400 bg-sky-400/10 border-sky-400/20';
+    case 'cron': return 'text-amber-400 bg-amber-400/10 border-amber-400/20';
+    default: return 'text-neutral-400 bg-neutral-400/10 border-neutral-400/20';
   }
 }
 
@@ -85,13 +85,13 @@ function ToolResultBlock({ content }: { content: string }) {
 
   return (
     <div>
-      <pre className="text-[11px] font-mono text-ctp-overlay2 bg-black/20 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto">
+      <pre className="text-[11px] font-mono text-neutral-400 bg-black/20 rounded-lg p-3 overflow-x-auto whitespace-pre-wrap leading-relaxed max-h-96 overflow-y-auto">
         {preview}
       </pre>
       {isLong && (
         <button
           onClick={() => setExpanded(!expanded)}
-          className="flex items-center gap-1 mt-1 text-[10px] text-ctp-mauve hover:text-ctp-lavender"
+          className="flex items-center gap-1 mt-1 text-[10px] text-purple-400 hover:text-indigo-300"
         >
           {expanded ? <ChevronDown size={10} /> : <ChevronRight size={10} />}
           {expanded ? 'Collapse' : `Expand (${lines.length} lines)`}
@@ -103,7 +103,7 @@ function ToolResultBlock({ content }: { content: string }) {
 
 function ToolCallBadge({ name }: { name: string }) {
   return (
-    <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded bg-ctp-yellow/10 text-ctp-yellow border border-ctp-yellow/20">
+    <span className="inline-flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded bg-amber-400/10 text-amber-400 border border-amber-400/20">
       <Wrench size={9} />
       {name}
     </span>
@@ -116,12 +116,12 @@ function MessageBlock({ msg, index }: { msg: Message; index: number }) {
   if (msg.role === 'user') {
     return (
       <div className="flex gap-3">
-        <div className="w-7 h-7 rounded-lg bg-ctp-blue/10 border border-ctp-blue/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-          <User size={13} className="text-ctp-blue" />
+        <div className="w-7 h-7 rounded-lg bg-blue-400/10 border border-blue-400/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+          <User size={13} className="text-blue-400" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] text-ctp-overlay0 mb-1">You · {msg.timestamp}</p>
-          <div className="text-sm text-ctp-subtext1 whitespace-pre-wrap break-words">
+          <p className="text-[10px] text-neutral-600 mb-1">You · {msg.timestamp}</p>
+          <div className="text-sm text-neutral-200 whitespace-pre-wrap break-words">
             {msg.content}
           </div>
         </div>
@@ -133,18 +133,18 @@ function MessageBlock({ msg, index }: { msg: Message; index: number }) {
     const hasToolCalls = msg.tool_calls && msg.tool_calls.length > 0;
     return (
       <div className="flex gap-3">
-        <div className="w-7 h-7 rounded-lg bg-ctp-mauve/10 border border-ctp-mauve/30 flex items-center justify-center flex-shrink-0 mt-0.5">
-          <Bot size={13} className="text-ctp-mauve" />
+        <div className="w-7 h-7 rounded-lg bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+          <Bot size={13} className="text-purple-400" />
         </div>
         <div className="flex-1 min-w-0">
-          <p className="text-[10px] text-ctp-overlay0 mb-1">
+          <p className="text-[10px] text-neutral-600 mb-1">
             Assistant · {msg.timestamp}
             {msg.finish_reason && msg.finish_reason !== 'tool_calls' && (
-              <span className="ml-2 text-ctp-surface2">({msg.finish_reason})</span>
+              <span className="ml-2 text-neutral-700">({msg.finish_reason})</span>
             )}
           </p>
           {msg.content && (
-            <div className="text-sm text-ctp-subtext1 whitespace-pre-wrap break-words mb-2">
+            <div className="text-sm text-neutral-200 whitespace-pre-wrap break-words mb-2">
               {msg.content}
             </div>
           )}
@@ -163,12 +163,12 @@ function MessageBlock({ msg, index }: { msg: Message; index: number }) {
   if (msg.role === 'tool') {
     return (
       <div className="flex gap-3 ml-10">
-        <div className="w-5 h-5 rounded bg-ctp-yellow/10 border border-ctp-yellow/20 flex items-center justify-center flex-shrink-0 mt-0.5">
-          <Wrench size={10} className="text-ctp-yellow" />
+        <div className="w-5 h-5 rounded bg-amber-400/10 border border-amber-400/20 flex items-center justify-center flex-shrink-0 mt-0.5">
+          <Wrench size={10} className="text-amber-400" />
         </div>
         <div className="flex-1 min-w-0">
           {msg.tool_name && (
-            <p className="text-[10px] text-ctp-overlay0 mb-1">{msg.tool_name} result</p>
+            <p className="text-[10px] text-neutral-600 mb-1">{msg.tool_name} result</p>
           )}
           {msg.content && <ToolResultBlock content={msg.content} />}
         </div>
@@ -178,7 +178,7 @@ function MessageBlock({ msg, index }: { msg: Message; index: number }) {
 
   // Fallback for unknown roles
   return (
-    <div className="ml-10 text-xs text-ctp-overlay0">
+    <div className="ml-10 text-xs text-neutral-600">
       <span className="font-medium">[{msg.role}]</span> {msg.content?.slice(0, 200)}
     </div>
   );
@@ -211,10 +211,10 @@ export default function SessionDetailPage() {
   if (loading) {
     return (
       <div className="max-w-4xl mx-auto animate-pulse">
-        <div className="h-6 bg-ctp-surface0/50 rounded w-48 mb-4" />
-        <div className="h-24 bg-ctp-surface0/40 rounded-xl mb-4" />
+        <div className="h-6 bg-white/[0.04] rounded w-48 mb-4" />
+        <div className="h-24 bg-white/[0.03] rounded-xl mb-4" />
         <div className="space-y-3">
-          {[...Array(5)].map((_, i) => <div key={i} className="h-16 bg-ctp-surface0/40 rounded-xl" />)}
+          {[...Array(5)].map((_, i) => <div key={i} className="h-16 bg-white/[0.03] rounded-xl" />)}
         </div>
       </div>
     );
@@ -223,11 +223,11 @@ export default function SessionDetailPage() {
   if (error || !session) {
     return (
       <div className="max-w-4xl mx-auto">
-        <Link href="/sessions" className="flex items-center gap-1.5 text-sm text-ctp-overlay1 hover:text-ctp-subtext0 mb-4">
+        <Link href="/sessions" className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-300 mb-4">
           <ArrowLeft size={14} /> Back to sessions
         </Link>
-        <div className="rounded-xl border border-ctp-red/20 bg-ctp-red/5 p-6 text-center">
-          <p className="text-sm text-ctp-red">{error || 'Session not found'}</p>
+        <div className="rounded-xl border border-red-500/20 bg-red-500/5 p-6 text-center">
+          <p className="text-sm text-red-400">{error || 'Session not found'}</p>
         </div>
       </div>
     );
@@ -240,28 +240,28 @@ export default function SessionDetailPage() {
   return (
     <div className="max-w-4xl mx-auto">
       {/* Back link */}
-      <Link href="/sessions" className="flex items-center gap-1.5 text-sm text-ctp-overlay1 hover:text-ctp-subtext0 mb-4">
+      <Link href="/sessions" className="flex items-center gap-1.5 text-sm text-neutral-500 hover:text-neutral-300 mb-4">
         <ArrowLeft size={14} /> Sessions
       </Link>
 
       {/* Session header */}
-      <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-5 mb-5">
+      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5 mb-5">
         <div className="flex items-start justify-between mb-3">
           <div>
-            <h1 className="text-lg font-bold text-ctp-text">{session.title || session.id}</h1>
+            <h1 className="text-lg font-bold text-white">{session.title || session.id}</h1>
             <div className="flex items-center gap-2 mt-1.5">
               <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded border ${sourceColor(session.source)}`}>
                 {session.source}
               </span>
-              <span className="text-xs text-ctp-overlay1">{shortModel(session.model)}</span>
+              <span className="text-xs text-neutral-500">{shortModel(session.model)}</span>
               {session.billing_provider && (
-                <span className="text-xs text-ctp-overlay0">via {session.billing_provider}</span>
+                <span className="text-xs text-neutral-600">via {session.billing_provider}</span>
               )}
             </div>
           </div>
-          <div className="text-right text-[11px] text-ctp-overlay1">
+          <div className="text-right text-[11px] text-neutral-500">
             <p>{session.started_at}</p>
-            {session.duration && <p className="text-ctp-overlay0">{session.duration}</p>}
+            {session.duration && <p className="text-neutral-600">{session.duration}</p>}
           </div>
         </div>
 
@@ -274,17 +274,17 @@ export default function SessionDetailPage() {
         </div>
 
         {session.end_reason && (
-          <p className="text-[10px] text-ctp-overlay0 mt-3">
-            End reason: <span className="text-ctp-overlay1">{session.end_reason}</span>
+          <p className="text-[10px] text-neutral-600 mt-3">
+            End reason: <span className="text-neutral-500">{session.end_reason}</span>
           </p>
         )}
       </div>
 
       {/* Transcript */}
-      <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-5">
+      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
         <div className="flex items-center justify-between mb-4">
-          <h2 className="text-sm font-semibold text-ctp-text">Transcript</h2>
-          <p className="text-[10px] text-ctp-overlay0">
+          <h2 className="text-sm font-semibold text-white">Transcript</h2>
+          <p className="text-[10px] text-neutral-600">
             {userMsgCount} user · {assistantMsgCount} assistant · {toolMsgCount} tool
           </p>
         </div>
@@ -301,11 +301,11 @@ export default function SessionDetailPage() {
 
 function StatChip({ label, value, icon }: { label: string; value: string; icon: React.ReactNode }) {
   return (
-    <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-ctp-surface0/40">
-      <span className="text-ctp-overlay0">{icon}</span>
+    <div className="flex items-center gap-2 px-2.5 py-1.5 rounded-lg bg-white/[0.03]">
+      <span className="text-neutral-600">{icon}</span>
       <div>
-        <p className="text-xs font-bold text-ctp-subtext1">{value}</p>
-        <p className="text-[9px] text-ctp-overlay0">{label}</p>
+        <p className="text-xs font-bold text-neutral-200">{value}</p>
+        <p className="text-[9px] text-neutral-600">{label}</p>
       </div>
     </div>
   );

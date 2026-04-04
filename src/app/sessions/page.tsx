@@ -84,29 +84,29 @@ function contextFillPct(inputTokens: number, outputTokens: number, model: string
 
 function sourceType(source: string): { label: string; color: string } {
   switch (source) {
-    case 'cli': return { label: 'MAIN', color: 'bg-ctp-blue/20 text-ctp-blue border-ctp-blue/30' };
-    case 'telegram': return { label: 'TELEGRAM', color: 'bg-ctp-teal/20 text-ctp-teal border-ctp-teal/30' };
-    case 'cron': return { label: 'CRON', color: 'bg-ctp-mauve/20 text-ctp-mauve border-ctp-mauve/30' };
-    case 'discord': return { label: 'DISCORD', color: 'bg-ctp-mauve/20 text-ctp-mauve border-ctp-mauve/30' };
+    case 'cli': return { label: 'MAIN', color: 'bg-blue-400/20 text-blue-400 border-blue-400/30' };
+    case 'telegram': return { label: 'TELEGRAM', color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' };
+    case 'cron': return { label: 'CRON', color: 'bg-indigo-500/[0.15] text-purple-400 border-indigo-500/20' };
+    case 'discord': return { label: 'DISCORD', color: 'bg-indigo-500/[0.15] text-purple-400 border-indigo-500/20' };
     default:
       if (source === 'subagent' || source === 'delegation') {
-        return { label: 'SUBAGENT', color: 'bg-ctp-teal/20 text-ctp-teal border-ctp-teal/30' };
+        return { label: 'SUBAGENT', color: 'bg-cyan-500/20 text-cyan-400 border-cyan-500/30' };
       }
-      return { label: source.toUpperCase(), color: 'bg-ctp-overlay1/20 text-ctp-overlay2 border-ctp-overlay1/30' };
+      return { label: source.toUpperCase(), color: 'bg-neutral-500/20 text-neutral-400 border-neutral-500/30' };
   }
 }
 
 function sourceAvatar(source: string): { emoji: string; bg: string } {
   switch (source) {
-    case 'cli': return { emoji: '💻', bg: 'from-ctp-blue to-ctp-sapphire' };
-    case 'telegram': return { emoji: '✈️', bg: 'from-ctp-teal to-ctp-teal' };
-    case 'cron': return { emoji: '⏰', bg: 'from-ctp-mauve to-ctp-mauve' };
-    case 'discord': return { emoji: '🎮', bg: 'from-ctp-mauve to-ctp-blue' };
+    case 'cli': return { emoji: '💻', bg: 'from-blue-600 to-blue-800' };
+    case 'telegram': return { emoji: '✈️', bg: 'from-teal-500 to-teal-700' };
+    case 'cron': return { emoji: '⏰', bg: 'from-purple-500 to-purple-700' };
+    case 'discord': return { emoji: '🎮', bg: 'from-indigo-500 to-indigo-700' };
     default:
       if (source === 'subagent' || source === 'delegation') {
-        return { emoji: '🤖', bg: 'from-ctp-teal to-ctp-teal' };
+        return { emoji: '🤖', bg: 'from-teal-500 to-teal-700' };
       }
-      return { emoji: '📡', bg: 'from-ctp-overlay1 to-ctp-surface2' };
+      return { emoji: '📡', bg: 'from-neutral-500 to-neutral-700' };
   }
 }
 
@@ -133,7 +133,7 @@ function LiveClock() {
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, []);
-  return <span className="text-sm text-ctp-overlay1 font-mono">{time}</span>;
+  return <span className="text-sm text-neutral-500 font-mono">{time}</span>;
 }
 
 /* ─── page ─── */
@@ -181,15 +181,15 @@ export default function SessionsPage() {
       {/* Header */}
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-3">
-          <Monitor size={20} className="text-ctp-mauve" />
-          <h1 className="text-xl font-bold text-ctp-text">Sessions</h1>
+          <Monitor size={20} className="text-purple-400" />
+          <h1 className="text-xl font-bold text-white">Sessions</h1>
         </div>
         <div className="flex items-center gap-3">
           <LiveClock />
           <button
             onClick={handleRefresh}
             disabled={refreshing}
-            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-ctp-surface0/50 border border-ctp-surface1 text-ctp-overlay2 hover:text-ctp-text hover:bg-ctp-surface1/50 transition-all text-xs"
+            className="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-white/[0.04] border border-white/[0.08] text-neutral-400 hover:text-white hover:bg-white/[0.08] transition-all text-xs"
           >
             <RefreshCw size={13} className={refreshing ? 'animate-spin' : ''} />
             Refresh
@@ -200,45 +200,45 @@ export default function SessionsPage() {
       {/* Summary cards */}
       <div className="grid grid-cols-3 gap-4 mb-6">
         {/* Active */}
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 px-5 py-4">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-2 h-2 rounded-full bg-ctp-green pulse-dot" />
-            <p className="text-xs text-ctp-overlay1 font-medium">Active</p>
+            <div className="w-2 h-2 rounded-full bg-green-400 pulse-dot" />
+            <p className="text-xs text-neutral-500 font-medium">Active</p>
           </div>
-          <p className="text-3xl font-bold text-ctp-text">{stats.active}</p>
+          <p className="text-3xl font-bold text-white">{stats.active}</p>
         </div>
         {/* Idle 24h */}
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 px-5 py-4">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
           <div className="flex items-center gap-2 mb-1">
-            <div className="w-2 h-2 rounded-full bg-ctp-overlay1" />
-            <p className="text-xs text-ctp-overlay1 font-medium">Idle (24h)</p>
+            <div className="w-2 h-2 rounded-full bg-neutral-500" />
+            <p className="text-xs text-neutral-500 font-medium">Idle (24h)</p>
           </div>
-          <p className="text-3xl font-bold text-ctp-text">{stats.idle24h}</p>
+          <p className="text-3xl font-bold text-white">{stats.idle24h}</p>
         </div>
         {/* Total 24h */}
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 px-5 py-4">
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] px-5 py-4">
           <div className="flex items-center gap-2 mb-1">
-            <Monitor size={12} className="text-ctp-mauve" />
-            <p className="text-xs text-ctp-overlay1 font-medium">Total (24h)</p>
+            <Monitor size={12} className="text-purple-400" />
+            <p className="text-xs text-neutral-500 font-medium">Total (24h)</p>
           </div>
-          <p className="text-3xl font-bold text-ctp-text">{stats.total24h}</p>
+          <p className="text-3xl font-bold text-white">{stats.total24h}</p>
         </div>
       </div>
 
       {/* Filters */}
       <div className="flex flex-wrap items-center gap-2 mb-4">
-        <div className="flex items-center gap-1 bg-ctp-surface0/50 border border-ctp-surface1 rounded-lg overflow-hidden">
-          <Search size={13} className="text-ctp-overlay0 ml-2.5" />
+        <div className="flex items-center gap-1 bg-white/[0.04] border border-white/[0.08] rounded-lg overflow-hidden">
+          <Search size={13} className="text-neutral-600 ml-2.5" />
           <input
             type="text"
             value={searchInput}
             onChange={e => setSearchInput(e.target.value)}
             onKeyDown={e => e.key === 'Enter' && doSearch()}
             placeholder="Search messages..."
-            className="bg-transparent text-sm text-ctp-text placeholder:text-ctp-overlay0 px-2 py-1.5 w-48 focus:outline-none"
+            className="bg-transparent text-sm text-white placeholder:text-neutral-600 px-2 py-1.5 w-48 focus:outline-none"
           />
           {searchInput && (
-            <button onClick={() => { setSearchInput(''); setSearch(''); setPage(1); }} className="text-ctp-overlay0 hover:text-ctp-overlay2 pr-2">
+            <button onClick={() => { setSearchInput(''); setSearch(''); setPage(1); }} className="text-neutral-600 hover:text-neutral-400 pr-2">
               <X size={13} />
             </button>
           )}
@@ -247,7 +247,7 @@ export default function SessionsPage() {
         <select
           value={source}
           onChange={e => { setSource(e.target.value); setPage(1); }}
-          className="bg-ctp-surface0/50 border border-ctp-surface1 rounded-lg text-xs text-ctp-subtext0 px-2.5 py-1.5 focus:outline-none focus:border-ctp-mauve/30 appearance-none cursor-pointer"
+          className="bg-white/[0.04] border border-white/[0.08] rounded-lg text-xs text-neutral-300 px-2.5 py-1.5 focus:outline-none focus:border-indigo-500/20 appearance-none cursor-pointer"
         >
           <option value="">All sources</option>
           {data?.filters.sources.map(s => (
@@ -258,7 +258,7 @@ export default function SessionsPage() {
         <select
           value={model}
           onChange={e => { setModel(e.target.value); setPage(1); }}
-          className="bg-ctp-surface0/50 border border-ctp-surface1 rounded-lg text-xs text-ctp-subtext0 px-2.5 py-1.5 focus:outline-none focus:border-ctp-mauve/30 appearance-none cursor-pointer"
+          className="bg-white/[0.04] border border-white/[0.08] rounded-lg text-xs text-neutral-300 px-2.5 py-1.5 focus:outline-none focus:border-indigo-500/20 appearance-none cursor-pointer"
         >
           <option value="">All models</option>
           {data?.filters.models.map(m => (
@@ -267,16 +267,16 @@ export default function SessionsPage() {
         </select>
 
         {hasFilters && (
-          <button onClick={clearFilters} className="text-[11px] text-ctp-overlay1 hover:text-ctp-subtext0 px-2 py-1">
+          <button onClick={clearFilters} className="text-[11px] text-neutral-500 hover:text-neutral-300 px-2 py-1">
             Clear filters
           </button>
         )}
       </div>
 
       {/* Sessions table */}
-      <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 overflow-hidden">
+      <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
         {/* Table header */}
-        <div className="hidden sm:grid grid-cols-[1fr_140px_180px_80px_100px_100px] gap-3 px-4 py-2.5 border-b border-ctp-surface0 text-[10px] font-semibold text-ctp-overlay1 uppercase tracking-wider">
+        <div className="hidden sm:grid grid-cols-[1fr_140px_180px_80px_100px_100px] gap-3 px-4 py-2.5 border-b border-white/[0.06] text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">
           <div>Agent</div>
           <div>Model</div>
           <div>Context Fill</div>
@@ -286,13 +286,13 @@ export default function SessionsPage() {
         </div>
 
         {loading && !data ? (
-          <div className="p-8 text-center text-sm text-ctp-overlay1">Loading...</div>
+          <div className="p-8 text-center text-sm text-neutral-500">Loading...</div>
         ) : data?.sessions.length === 0 ? (
-          <div className="p-8 text-center text-sm text-ctp-overlay1">
+          <div className="p-8 text-center text-sm text-neutral-500">
             {hasFilters ? 'No sessions match your filters' : 'No sessions found'}
           </div>
         ) : (
-          <div className="divide-y divide-ctp-surface0/50">
+          <div className="divide-y divide-white/[0.04]">
             {data?.sessions.map(s => {
               const avatar = sourceAvatar(s.source);
               const type = sourceType(s.source);
@@ -304,7 +304,7 @@ export default function SessionsPage() {
                 <Link
                   key={s.id}
                   href={`/session/${s.id}`}
-                  className="grid grid-cols-1 sm:grid-cols-[1fr_140px_180px_80px_100px_100px] gap-1 sm:gap-3 px-4 py-3 hover:bg-ctp-surface1/30 transition-colors items-center group"
+                  className="grid grid-cols-1 sm:grid-cols-[1fr_140px_180px_80px_100px_100px] gap-1 sm:gap-3 px-4 py-3 hover:bg-white/[0.04] transition-colors items-center group"
                 >
                   {/* Agent */}
                   <div className="flex items-center gap-3 min-w-0">
@@ -312,38 +312,38 @@ export default function SessionsPage() {
                       {avatar.emoji}
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-semibold text-ctp-subtext1 truncate group-hover:text-ctp-text transition-colors">
+                      <p className="text-sm font-semibold text-neutral-200 truncate group-hover:text-white transition-colors">
                         {s.title || s.id.slice(0, 12)}
                       </p>
-                      <p className="text-[10px] text-ctp-overlay0 truncate">
+                      <p className="text-[10px] text-neutral-600 truncate">
                         {s.id.slice(0, 8)} · {s.message_count} msgs · {s.tool_call_count} tools
                       </p>
                     </div>
                     {isActive && (
-                      <div className="w-2 h-2 rounded-full bg-ctp-green pulse-dot flex-shrink-0" />
+                      <div className="w-2 h-2 rounded-full bg-green-400 pulse-dot flex-shrink-0" />
                     )}
                   </div>
 
                   {/* Model */}
-                  <div className="hidden sm:block text-sm text-ctp-overlay1 truncate">
+                  <div className="hidden sm:block text-sm text-neutral-500 truncate">
                     {shortModel(s.model)}
                   </div>
 
                   {/* Context Fill */}
                   <div className="hidden sm:block">
                     <div className="flex items-center gap-2">
-                      <div className="flex-1 h-1.5 rounded-full bg-ctp-surface0/70 overflow-hidden">
+                      <div className="flex-1 h-1.5 rounded-full bg-white/[0.06] overflow-hidden">
                         <div
-                          className="h-full rounded-full bg-ctp-green transition-all"
+                          className="h-full rounded-full bg-green-400 transition-all"
                           style={{ width: `${Math.max(pct, 1)}%` }}
                         />
                       </div>
-                      <span className="text-xs font-semibold text-ctp-green w-8 text-right">{pct}%</span>
+                      <span className="text-xs font-semibold text-green-400 w-8 text-right">{pct}%</span>
                     </div>
                   </div>
 
                   {/* Tokens */}
-                  <div className="hidden sm:block text-right text-sm text-ctp-overlay2 font-mono">
+                  <div className="hidden sm:block text-right text-sm text-neutral-400 font-mono">
                     {formatTokens(totalTokens)}
                   </div>
 
@@ -355,13 +355,13 @@ export default function SessionsPage() {
                   </div>
 
                   {/* Last Active */}
-                  <div className="hidden sm:flex items-center justify-end gap-1.5 text-sm text-ctp-overlay1">
-                    <Clock size={11} className="text-ctp-overlay0" />
+                  <div className="hidden sm:flex items-center justify-end gap-1.5 text-sm text-neutral-500">
+                    <Clock size={11} className="text-neutral-600" />
                     {timeAgo(s.started_at)}
                   </div>
 
                   {/* Mobile summary */}
-                  <div className="sm:hidden flex items-center gap-2 text-[10px] text-ctp-overlay0">
+                  <div className="sm:hidden flex items-center gap-2 text-[10px] text-neutral-600">
                     <span className={`font-bold px-1.5 py-0.5 rounded border ${type.color}`}>{type.label}</span>
                     <span>{shortModel(s.model)}</span>
                     <span>·</span>
@@ -379,21 +379,21 @@ export default function SessionsPage() {
       {/* Pagination */}
       {data && data.pages > 1 && (
         <div className="flex items-center justify-between mt-4">
-          <p className="text-[11px] text-ctp-overlay0">
+          <p className="text-[11px] text-neutral-600">
             Page {data.page} of {data.pages} · {data.total} total
           </p>
           <div className="flex items-center gap-1">
             <button
               onClick={() => setPage(p => Math.max(1, p - 1))}
               disabled={page <= 1}
-              className="p-1.5 rounded-lg text-ctp-overlay1 hover:text-ctp-text hover:bg-ctp-surface1/60 disabled:opacity-30 transition-all"
+              className="p-1.5 rounded-lg text-neutral-500 hover:text-white hover:bg-white/[0.1] disabled:opacity-30 transition-all"
             >
               <ChevronLeft size={15} />
             </button>
             <button
               onClick={() => setPage(p => Math.min(data.pages, p + 1))}
               disabled={page >= data.pages}
-              className="p-1.5 rounded-lg text-ctp-overlay1 hover:text-ctp-text hover:bg-ctp-surface1/60 disabled:opacity-30 transition-all"
+              className="p-1.5 rounded-lg text-neutral-500 hover:text-white hover:bg-white/[0.1] disabled:opacity-30 transition-all"
             >
               <ChevronRight size={15} />
             </button>

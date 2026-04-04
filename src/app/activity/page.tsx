@@ -49,30 +49,30 @@ function timeAgo(dateStr: string): string {
 
 function sourceColor(source: string): string {
   switch (source) {
-    case 'cli': return 'text-ctp-blue bg-ctp-blue/10 border-ctp-blue/20';
-    case 'telegram': return 'text-ctp-sky bg-ctp-sky/10 border-ctp-sky/20';
-    case 'cron': return 'text-ctp-yellow bg-ctp-yellow/10 border-ctp-yellow/20';
-    default: return 'text-ctp-overlay2 bg-ctp-overlay2/10 border-ctp-overlay2/20';
+    case 'cli': return 'text-blue-400 bg-blue-400/10 border-blue-400/20';
+    case 'telegram': return 'text-sky-400 bg-sky-400/10 border-sky-400/20';
+    case 'cron': return 'text-amber-400 bg-amber-400/10 border-amber-400/20';
+    default: return 'text-neutral-400 bg-neutral-400/10 border-neutral-400/20';
   }
 }
 
 function eventIcon(type: string) {
   switch (type) {
-    case 'session_start': return <Play size={11} className="text-ctp-green" />;
-    case 'session_end': return <Square size={11} className="text-ctp-overlay1" />;
-    case 'cron_run': return <Zap size={11} className="text-ctp-yellow" />;
-    case 'gateway_start': return <Radio size={11} className="text-ctp-mauve" />;
-    default: return <Activity size={11} className="text-ctp-overlay1" />;
+    case 'session_start': return <Play size={11} className="text-green-400" />;
+    case 'session_end': return <Square size={11} className="text-neutral-500" />;
+    case 'cron_run': return <Zap size={11} className="text-amber-400" />;
+    case 'gateway_start': return <Radio size={11} className="text-purple-400" />;
+    default: return <Activity size={11} className="text-neutral-500" />;
   }
 }
 
 function eventColor(type: string): string {
   switch (type) {
-    case 'session_start': return 'border-ctp-green/20';
-    case 'session_end': return 'border-ctp-overlay1/10';
-    case 'cron_run': return 'border-ctp-yellow/20';
-    case 'gateway_start': return 'border-ctp-mauve/30';
-    default: return 'border-ctp-surface0';
+    case 'session_start': return 'border-green-500/20';
+    case 'session_end': return 'border-neutral-500/10';
+    case 'cron_run': return 'border-amber-400/20';
+    case 'gateway_start': return 'border-indigo-500/20';
+    default: return 'border-white/[0.06]';
   }
 }
 
@@ -129,12 +129,12 @@ export default function ActivityPage() {
     <div className="max-w-3xl mx-auto">
       <div className="flex items-center justify-between mb-5">
         <div>
-          <div className="flex items-center gap-3"><Activity size={20} className="text-ctp-mauve" /><h1 className="text-xl font-bold text-ctp-text">Activity</h1></div>
-          <p className="text-sm text-ctp-overlay1 mt-0.5">
+          <div className="flex items-center gap-3"><Activity size={20} className="text-purple-400" /><h1 className="text-xl font-bold text-white">Activity</h1></div>
+          <p className="text-sm text-neutral-500 mt-0.5">
             {data ? `${data.total} events` : 'Loading...'}
           </p>
         </div>
-        <div className="flex rounded-lg bg-ctp-surface0/50 p-0.5">
+        <div className="flex rounded-lg bg-white/[0.04] p-0.5">
           {[
             { value: 6, label: '6h' },
             { value: 24, label: '24h' },
@@ -146,8 +146,8 @@ export default function ActivityPage() {
               onClick={() => setHours(opt.value)}
               className={`px-3 py-1 rounded-md text-xs font-medium transition-all ${
                 hours === opt.value
-                  ? 'bg-ctp-mauve/20 text-ctp-lavender'
-                  : 'text-ctp-overlay1 hover:text-ctp-subtext0'
+                  ? 'bg-indigo-500/[0.15] text-indigo-300'
+                  : 'text-neutral-500 hover:text-neutral-300'
               }`}
             >
               {opt.label}
@@ -158,44 +158,44 @@ export default function ActivityPage() {
 
       {loading && !data ? (
         <div className="animate-pulse space-y-2">
-          {[...Array(8)].map((_, i) => <div key={i} className="h-12 bg-ctp-surface0/40 rounded-lg" />)}
+          {[...Array(8)].map((_, i) => <div key={i} className="h-12 bg-white/[0.03] rounded-lg" />)}
         </div>
       ) : data?.events.length === 0 ? (
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-8 text-center">
-          <p className="text-ctp-overlay1 text-sm">No activity in the last {hours}h</p>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-8 text-center">
+          <p className="text-neutral-500 text-sm">No activity in the last {hours}h</p>
         </div>
       ) : (
         <div className="space-y-6">
           {Array.from(grouped.entries()).map(([day, events]: [string, ActivityEvent[]]) => (
             <div key={day}>
-              <p className="text-[11px] font-medium text-ctp-overlay0 uppercase tracking-wider mb-2 px-1">
+              <p className="text-[11px] font-medium text-neutral-600 uppercase tracking-wider mb-2 px-1">
                 {formatDay(day)}
               </p>
               <div className="space-y-1">
                 {events.map((e, i) => (
                   <div
                     key={`${e.session_id}-${e.type}-${i}`}
-                    className={`flex items-start gap-3 px-3 py-2 rounded-lg border bg-ctp-surface0/20 hover:bg-ctp-surface1/30 transition-colors ${eventColor(e.type)}`}
+                    className={`flex items-start gap-3 px-3 py-2 rounded-lg border bg-white/[0.02] hover:bg-white/[0.04] transition-colors ${eventColor(e.type)}`}
                   >
-                    <div className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0 mt-0.5 bg-ctp-surface0/40">
+                    <div className="w-5 h-5 rounded flex items-center justify-center flex-shrink-0 mt-0.5 bg-white/[0.03]">
                       {eventIcon(e.type)}
                     </div>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-2">
                         {e.session_id ? (
-                          <Link href={`/session/${e.session_id}`} className="text-sm text-ctp-subtext1 hover:text-ctp-text truncate">
+                          <Link href={`/session/${e.session_id}`} className="text-sm text-neutral-200 hover:text-white truncate">
                             {e.title}
                           </Link>
                         ) : (
-                          <span className="text-sm text-ctp-subtext1 truncate">{e.title}</span>
+                          <span className="text-sm text-neutral-200 truncate">{e.title}</span>
                         )}
                         <span className={`text-[9px] font-medium px-1 py-0.5 rounded border flex-shrink-0 ${sourceColor(e.source)}`}>
                           {e.source}
                         </span>
                       </div>
-                      <p className="text-[11px] text-ctp-overlay0 mt-0.5">{e.detail}</p>
+                      <p className="text-[11px] text-neutral-600 mt-0.5">{e.detail}</p>
                     </div>
-                    <span className="text-[10px] text-ctp-overlay0 font-mono flex-shrink-0 mt-0.5">
+                    <span className="text-[10px] text-neutral-600 font-mono flex-shrink-0 mt-0.5">
                       {timeLabel(e.timestamp)}
                     </span>
                   </div>

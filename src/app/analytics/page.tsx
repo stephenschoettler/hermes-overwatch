@@ -74,23 +74,23 @@ function shortModel(m: string): string {
 }
 
 const MODEL_COLORS: Record<string, string> = {
-  'claude-opus-4-6': 'bg-ctp-mauve/50',
-  'claude-sonnet-4-6': 'bg-ctp-blue/50',
-  'gpt-5.4': 'bg-ctp-green/50',
+  'claude-opus-4-6': 'bg-indigo-500/50',
+  'claude-sonnet-4-6': 'bg-blue-400/50',
+  'gpt-5.4': 'bg-green-400/50',
 };
 
 const SOURCE_COLORS: Record<string, string> = {
-  cli: 'bg-ctp-mauve/50',
-  cron: 'bg-ctp-yellow/50',
-  telegram: 'bg-ctp-sky/50',
+  cli: 'bg-indigo-500/50',
+  cron: 'bg-amber-400/50',
+  telegram: 'bg-sky-400/50',
 };
 
 const BAR_COLORS: Record<string, { bar: string; hover: string }> = {
-  indigo: { bar: 'bg-ctp-mauve/40', hover: 'hover:bg-ctp-mauve/60' },
-  purple: { bar: 'bg-ctp-mauve/40', hover: 'hover:bg-ctp-mauve/60' },
-  blue:   { bar: 'bg-ctp-blue/40',   hover: 'hover:bg-ctp-blue/60' },
-  green:  { bar: 'bg-ctp-green/40',  hover: 'hover:bg-ctp-green/60' },
-  amber:  { bar: 'bg-ctp-yellow/40',  hover: 'hover:bg-ctp-yellow/60' },
+  indigo: { bar: 'bg-indigo-500/40', hover: 'hover:bg-indigo-500/60' },
+  purple: { bar: 'bg-indigo-500/40', hover: 'hover:bg-indigo-500/60' },
+  blue:   { bar: 'bg-blue-400/40',   hover: 'hover:bg-blue-400/60' },
+  green:  { bar: 'bg-green-400/40',  hover: 'hover:bg-green-400/60' },
+  amber:  { bar: 'bg-amber-400/40',  hover: 'hover:bg-amber-400/60' },
 };
 
 function BarChart({ data, barKey, label, color = 'indigo' }: {
@@ -99,7 +99,7 @@ function BarChart({ data, barKey, label, color = 'indigo' }: {
   label: string;
   color?: string;
 }) {
-  if (!data.length) return <p className="text-ctp-overlay0 text-xs">No data</p>;
+  if (!data.length) return <p className="text-neutral-600 text-xs">No data</p>;
   const max = Math.max(1, ...data.map(d => d.value));
   const barMaxPx = 80;
   const colors = BAR_COLORS[color] || BAR_COLORS.indigo;
@@ -111,13 +111,13 @@ function BarChart({ data, barKey, label, color = 'indigo' }: {
           const barH = Math.max(2, Math.round((d.value / max) * barMaxPx));
           return (
             <div key={d.label} className="flex-1 flex flex-col items-center justify-end gap-1 h-full">
-              <span className="text-[8px] text-ctp-overlay0">{d.value > 0 ? formatTokens(d.value) : ''}</span>
+              <span className="text-[8px] text-neutral-600">{d.value > 0 ? formatTokens(d.value) : ''}</span>
               <div
                 className={`w-full ${colors.bar} ${colors.hover} rounded-sm transition-all cursor-default`}
                 style={{ height: `${barH}px` }}
                 title={`${d.label}: ${d.value.toLocaleString()}`}
               />
-              <span className="text-[9px] text-ctp-overlay0">{d.label}</span>
+              <span className="text-[9px] text-neutral-600">{d.label}</span>
             </div>
           );
         })}
@@ -148,8 +148,8 @@ function StackedBars({ daily, byGroup, groupColors, groupLabel }: {
       <div className="flex flex-wrap gap-3 mb-2">
         {groups.map(g => (
           <div key={g} className="flex items-center gap-1.5">
-            <div className={`w-2 h-2 rounded-sm ${groupColors[g] || 'bg-ctp-overlay1/50'}`} />
-            <span className="text-[10px] text-ctp-overlay1">{groupLabel(g)}</span>
+            <div className={`w-2 h-2 rounded-sm ${groupColors[g] || 'bg-neutral-500/50'}`} />
+            <span className="text-[10px] text-neutral-500">{groupLabel(g)}</span>
           </div>
         ))}
       </div>
@@ -167,13 +167,13 @@ function StackedBars({ daily, byGroup, groupColors, groupLabel }: {
                   return (
                     <div
                       key={g.group}
-                      className={`w-full ${groupColors[g.group] || 'bg-ctp-overlay1/50'}`}
+                      className={`w-full ${groupColors[g.group] || 'bg-neutral-500/50'}`}
                       style={{ height: `${pct}%`, minHeight: g.value > 0 ? '1px' : '0' }}
                     />
                   );
                 })}
               </div>
-              <span className="text-[9px] text-ctp-overlay0">{day.slice(5)}</span>
+              <span className="text-[9px] text-neutral-600">{day.slice(5)}</span>
             </div>
           );
         })}
@@ -198,12 +198,12 @@ function HourlyChart({ data }: { data: HourlyRow[] }) {
         return (
           <div key={h} className="flex-1 flex flex-col items-center justify-end gap-0.5 h-full">
             <div
-              className={`w-full rounded-sm ${val > 0 ? 'bg-ctp-mauve/40' : 'bg-ctp-surface0/30'}`}
+              className={`w-full rounded-sm ${val > 0 ? 'bg-indigo-500/40' : 'bg-white/[0.02]'}`}
               style={{ height: `${barH}px` }}
               title={`${h}:00 — ${val} sessions`}
             />
             {parseInt(h) % 3 === 0 && (
-              <span className="text-[8px] text-ctp-surface2">{h}</span>
+              <span className="text-[8px] text-neutral-700">{h}</span>
             )}
           </div>
         );
@@ -230,9 +230,9 @@ export default function AnalyticsPage() {
   if (loading || !data) {
     return (
       <div className="max-w-5xl mx-auto animate-pulse">
-        <div className="h-8 bg-ctp-surface0/50 rounded-lg w-48 mb-6" />
+        <div className="h-8 bg-white/[0.04] rounded-lg w-48 mb-6" />
         <div className="grid grid-cols-2 gap-3">
-          {[...Array(4)].map((_, i) => <div key={i} className="h-48 bg-ctp-surface0/40 rounded-xl" />)}
+          {[...Array(4)].map((_, i) => <div key={i} className="h-48 bg-white/[0.03] rounded-xl" />)}
         </div>
       </div>
     );
@@ -244,8 +244,8 @@ export default function AnalyticsPage() {
   return (
     <div className="max-w-5xl mx-auto space-y-5">
       <div>
-        <div className="flex items-center gap-3"><BarChart3 size={20} className="text-ctp-mauve" /><h1 className="text-xl font-bold text-ctp-text">Analytics</h1></div>
-        <p className="text-sm text-ctp-overlay1 mt-0.5">
+        <div className="flex items-center gap-3"><BarChart3 size={20} className="text-purple-400" /><h1 className="text-xl font-bold text-white">Analytics</h1></div>
+        <p className="text-sm text-neutral-500 mt-0.5">
           {data.daily.length} days tracked · {t.sessions} sessions
         </p>
       </div>
@@ -262,16 +262,16 @@ export default function AnalyticsPage() {
 
       {/* Charts row 1: Sessions + Tokens */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
-          <p className="text-xs font-medium text-ctp-overlay2 mb-3">Sessions per Day</p>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="text-xs font-medium text-neutral-400 mb-3">Sessions per Day</p>
           <BarChart
             data={data.daily.map(d => ({ label: d.day.slice(5), value: d.sessions }))}
             barKey="sessions"
             label="Sessions"
           />
         </div>
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
-          <p className="text-xs font-medium text-ctp-overlay2 mb-3">Output Tokens per Day</p>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="text-xs font-medium text-neutral-400 mb-3">Output Tokens per Day</p>
           <BarChart
             data={data.daily.map(d => ({ label: d.day.slice(5), value: d.output_tokens }))}
             barKey="output_tokens"
@@ -283,8 +283,8 @@ export default function AnalyticsPage() {
 
       {/* Charts row 2: By Source + By Model */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
-          <p className="text-xs font-medium text-ctp-overlay2 mb-3">Sessions by Source</p>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="text-xs font-medium text-neutral-400 mb-3">Sessions by Source</p>
           <StackedBars
             daily={data.daily}
             byGroup={data.dailyBySource.map(r => ({ day: r.day, group: r.source, value: r.sessions }))}
@@ -292,8 +292,8 @@ export default function AnalyticsPage() {
             groupLabel={g => g}
           />
         </div>
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
-          <p className="text-xs font-medium text-ctp-overlay2 mb-3">Sessions by Model</p>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="text-xs font-medium text-neutral-400 mb-3">Sessions by Model</p>
           <StackedBars
             daily={data.daily}
             byGroup={data.dailyByModel.map(r => ({ day: r.day, group: r.model, value: r.sessions }))}
@@ -305,8 +305,8 @@ export default function AnalyticsPage() {
 
       {/* Charts row 3: Messages + Hourly */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3">
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
-          <p className="text-xs font-medium text-ctp-overlay2 mb-3">Messages per Day</p>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="text-xs font-medium text-neutral-400 mb-3">Messages per Day</p>
           <BarChart
             data={data.daily.map(d => ({ label: d.day.slice(5), value: d.messages }))}
             barKey="messages"
@@ -314,8 +314,8 @@ export default function AnalyticsPage() {
             color="blue"
           />
         </div>
-        <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-4">
-          <p className="text-xs font-medium text-ctp-overlay2 mb-3">Activity by Hour (non-cron)</p>
+        <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
+          <p className="text-xs font-medium text-neutral-400 mb-3">Activity by Hour (non-cron)</p>
           <HourlyChart data={data.hourly} />
         </div>
       </div>
@@ -325,10 +325,10 @@ export default function AnalyticsPage() {
 
 function TotalCard({ label, value, sub }: { label: string; value: string; sub: string }) {
   return (
-    <div className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-3">
-      <p className="text-[9px] text-ctp-overlay0 uppercase tracking-wider">{label}</p>
-      <p className="text-lg font-bold text-ctp-text mt-0.5">{value}</p>
-      <p className="text-[10px] text-ctp-overlay0 mt-0.5">{sub}</p>
+    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+      <p className="text-[9px] text-neutral-600 uppercase tracking-wider">{label}</p>
+      <p className="text-lg font-bold text-white mt-0.5">{value}</p>
+      <p className="text-[10px] text-neutral-600 mt-0.5">{sub}</p>
     </div>
   );
 }

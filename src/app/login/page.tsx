@@ -38,12 +38,12 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-ctp-base flex items-center justify-center p-4">
+    <div className="min-h-screen bg-[#0a0a0f] flex items-center justify-center p-4">
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <Eye size={48} className="text-ctp-mauve mx-auto mb-4" />
-          <h1 className="text-2xl font-bold text-ctp-text">Overwatch</h1>
-          <p className="text-sm text-ctp-overlay1 mt-1">Hermes Agent Dashboard</p>
+          <Eye size={48} className="text-purple-400 mx-auto mb-4" />
+          <h1 className="text-2xl font-bold text-white">Overwatch</h1>
+          <p className="text-sm text-neutral-500 mt-1">Hermes Agent Dashboard</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -54,19 +54,19 @@ export default function LoginPage() {
               onChange={e => setPassword(e.target.value)}
               placeholder="Password"
               autoFocus
-              className="w-full bg-ctp-surface0/70 border border-ctp-surface1 rounded-lg px-4 py-3 text-sm text-ctp-text placeholder:text-ctp-overlay0 focus:outline-none focus:border-ctp-mauve/50 transition-colors"
+              className="w-full bg-white/[0.06] border border-white/[0.08] rounded-lg px-4 py-3 text-sm text-white placeholder:text-neutral-600 focus:outline-none focus:border-indigo-500/50 transition-colors"
               disabled={loading}
             />
           </div>
 
           {error && (
-            <p className="text-sm text-ctp-red text-center">{error}</p>
+            <p className="text-sm text-red-400 text-center">{error}</p>
           )}
 
           <button
             type="submit"
             disabled={!password || loading}
-            className="w-full bg-ctp-mauve hover:bg-ctp-mauve disabled:opacity-40 disabled:cursor-not-allowed text-ctp-text font-medium py-3 rounded-lg text-sm transition-colors"
+            className="w-full bg-indigo-500 hover:bg-indigo-500 disabled:opacity-40 disabled:cursor-not-allowed text-white font-medium py-3 rounded-lg text-sm transition-colors"
           >
             {loading ? 'Signing in...' : 'Sign In'}
           </button>

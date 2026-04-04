@@ -40,7 +40,7 @@ function LiveClock() {
     const id = setInterval(tick, 1000);
     return () => clearInterval(id);
   }, []);
-  return <p className="text-[11px] text-ctp-overlay2 font-mono pl-4 mb-1">{time}</p>;
+  return <p className="text-[11px] text-neutral-400 font-mono pl-4 mb-1">{time}</p>;
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -56,7 +56,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <head>
           <title>Overwatch — Sign In</title>
           <meta name="description" content="Overwatch" />
-          <meta name="theme-color" content="#1e1e2e" />
+          <meta name="theme-color" content="#0a0a0f" />
           <link rel="preconnect" href="https://fonts.googleapis.com" />
           <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
           <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -71,7 +71,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <title>Overwatch</title>
         <meta name="description" content="Overwatch — Hermes Agent Dashboard" />
-        <meta name="theme-color" content="#1e1e2e" />
+        <meta name="theme-color" content="#0a0a0f" />
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
@@ -79,16 +79,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <body className="antialiased">
         <div className="flex h-screen">
           {/* Mobile top bar */}
-          <div className="lg:hidden fixed top-0 left-0 right-0 z-30 h-12 bg-ctp-mantle border-b border-ctp-surface0 flex items-center justify-between px-4">
+          <div className="lg:hidden fixed top-0 left-0 right-0 z-30 h-12 bg-[#0c0c14] border-b border-white/[0.06] flex items-center justify-between px-4">
             <button
               onClick={() => setSidebarOpen(o => !o)}
-              className="p-1.5 rounded-lg text-ctp-overlay2 hover:text-ctp-text hover:bg-ctp-surface1/60 transition-all"
+              className="p-1.5 rounded-lg text-neutral-400 hover:text-white hover:bg-white/[0.1] transition-all"
             >
               {sidebarOpen ? <X size={18} /> : <Menu size={18} />}
             </button>
             <Link href="/" className="flex items-center gap-2">
-              <Eye size={22} className="text-ctp-mauve" />
-              <span className="text-sm font-bold text-ctp-text tracking-tight">Overwatch</span>
+              <Eye size={22} className="text-purple-400" />
+              <span className="text-sm font-bold text-white tracking-tight">Overwatch</span>
             </Link>
             <div className="w-8" />
           </div>
@@ -104,16 +104,16 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           {/* Sidebar */}
           <aside className={`
             fixed lg:relative z-20 top-0 left-0 h-full
-            w-[200px] flex-shrink-0 border-r border-ctp-surface0 bg-ctp-mantle flex flex-col
+            w-[200px] flex-shrink-0 border-r border-white/[0.06] bg-[#0c0c14] flex flex-col
             transition-transform duration-200
             ${sidebarOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}
           `}>
             <div className="px-5 pt-5 pb-4 flex items-center">
               <Link href="/" className="group flex items-center gap-2.5">
-                <Eye size={24} className="text-ctp-mauve" />
+                <Eye size={24} className="text-purple-400" />
                 <div>
-                  <h1 className="text-sm font-bold text-ctp-text tracking-tight">Overwatch</h1>
-                  <p className="text-[10px] text-ctp-overlay1 tracking-wide">HERMES AGENT</p>
+                  <h1 className="text-sm font-bold text-white tracking-tight">Overwatch</h1>
+                  <p className="text-[10px] text-neutral-500 tracking-wide">HERMES AGENT</p>
                 </div>
               </Link>
             </div>
@@ -128,27 +128,27 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                       href={href}
                       className={`flex items-center gap-3 px-3 py-2 rounded-lg text-[13px] font-medium transition-all duration-150 ${
                         active
-                          ? 'bg-ctp-mauve/20 text-ctp-text border border-ctp-mauve/30'
-                          : 'text-ctp-overlay1 hover:text-ctp-subtext1 hover:bg-ctp-surface1/50 border border-transparent'
+                          ? 'bg-indigo-500/[0.15] text-white border border-indigo-500/20'
+                          : 'text-neutral-500 hover:text-neutral-200 hover:bg-white/[0.08] border border-transparent'
                       }`}
                     >
-                      <Icon size={15} className={active ? 'text-ctp-lavender' : 'text-ctp-overlay0'} />
+                      <Icon size={15} className={active ? 'text-indigo-300' : 'text-neutral-600'} />
                       {label}
-                      {active && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-ctp-lavender" />}
+                      {active && <div className="ml-auto w-1.5 h-1.5 rounded-full bg-indigo-400" />}
                     </Link>
                   );
                 })}
               </div>
             </nav>
 
-            <div className="border-t border-ctp-surface0">
+            <div className="border-t border-white/[0.06]">
               <div className="px-4 pb-4 pt-3">
                 <LiveClock />
                 <div className="flex items-center gap-2 mt-1">
-                  <div className="w-2 h-2 rounded-full bg-ctp-green pulse-dot" />
-                  <p className="text-[11px] text-ctp-overlay2">System Online</p>
+                  <div className="w-2 h-2 rounded-full bg-green-400 pulse-dot" />
+                  <p className="text-[11px] text-neutral-400">System Online</p>
                 </div>
-                <p className="text-[10px] text-ctp-overlay0 mt-1.5 pl-4">localhost:3333</p>
+                <p className="text-[10px] text-neutral-600 mt-1.5 pl-4">localhost:3333</p>
               </div>
             </div>
           </aside>
@@ -160,7 +160,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
             </main>
 
-            <div className="flex-shrink-0 border-t border-ctp-surface0/50 py-2 text-center text-[10px] text-ctp-overlay1">
+            <div className="flex-shrink-0 border-t border-white/[0.06]/50 py-2 text-center text-[10px] text-neutral-500">
               Overwatch v1 · Hermes
             </div>
           </div>

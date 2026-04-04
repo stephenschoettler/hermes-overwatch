@@ -2,68 +2,20 @@
 @tailwind components;
 @tailwind utilities;
 
-/* ═══════════════════════════════════════════════════════════════
-   OVERWATCH THEME SYSTEM
-   
-   Switch themes by changing data-theme on <html>.
-   All colors flow through CSS custom properties.
-   To add a new theme: copy a [data-theme] block and adjust.
-   ═══════════════════════════════════════════════════════════════ */
-
-/* ── Catppuccin Mocha (default) ── */
-:root,
-[data-theme="mocha"] {
-  /* Base surfaces */
-  --ctp-crust:    #11111b;
-  --ctp-mantle:   #181825;
-  --ctp-base:     #1e1e2e;
-  --ctp-surface0: #313244;
-  --ctp-surface1: #45475a;
-  --ctp-surface2: #585b70;
-
-  /* Overlays */
-  --ctp-overlay0: #6c7086;
-  --ctp-overlay1: #7f849c;
-  --ctp-overlay2: #9399b2;
-
-  /* Text */
-  --ctp-subtext0: #a6adc8;
-  --ctp-subtext1: #bac2de;
-  --ctp-text:     #cdd6f4;
-
-  /* Accent colors */
-  --ctp-rosewater: #f5e0dc;
-  --ctp-flamingo:  #f2cdcd;
-  --ctp-pink:      #f5c2e7;
-  --ctp-mauve:     #cba6f7;
-  --ctp-red:       #f38ba8;
-  --ctp-maroon:    #eba0ac;
-  --ctp-peach:     #fab387;
-  --ctp-yellow:    #f9e2af;
-  --ctp-green:     #a6e3a1;
-  --ctp-teal:      #94e2d5;
-  --ctp-sky:       #89dceb;
-  --ctp-sapphire:  #74c7ec;
-  --ctp-blue:      #89b4fa;
-  --ctp-lavender:  #b4befe;
-
-  /* Semantic mapping */
-  --bg-primary:    var(--ctp-base);
-  --bg-secondary:  var(--ctp-mantle);
-  --bg-card:       var(--ctp-surface0);
-  --bg-hover:      var(--ctp-surface1);
-  --border-subtle: var(--ctp-surface0);
-  --border-medium: var(--ctp-surface1);
-  --text-primary:  var(--ctp-text);
-  --text-secondary: var(--ctp-subtext1);
-  --text-muted:    var(--ctp-overlay1);
-  --text-faint:    var(--ctp-overlay0);
-  --accent:        var(--ctp-mauve);
-  --accent-dim:    var(--ctp-surface2);
-  --success:       var(--ctp-green);
-  --warning:       var(--ctp-yellow);
-  --error:         var(--ctp-red);
-  --info:          var(--ctp-blue);
+:root {
+  --bg-primary: #0a0a0f;
+  --bg-secondary: #0c0c14;
+  --bg-card: #111118;
+  --border-subtle: rgba(255, 255, 255, 0.06);
+  --border-medium: rgba(255, 255, 255, 0.1);
+  --text-primary: #e4e4e7;
+  --text-secondary: #a1a1aa;
+  --text-muted: #71717a;
+  --accent-indigo: #6366f1;
+  --accent-purple: #a855f7;
+  --accent-green: #22c55e;
+  --accent-amber: #f59e0b;
+  --accent-red: #ef4444;
 }
 
 body {
@@ -75,8 +27,8 @@ body {
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
 ::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(--ctp-surface1); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--ctp-surface2); }
+::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.08); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.15); }
 
 /* Pulse dot animation */
 @keyframes pulse-dot {
@@ -87,6 +39,6 @@ body {
 
 /* Dot grid background */
 .dot-grid {
-  background-image: radial-gradient(circle, var(--ctp-surface0) 1px, transparent 1px);
+  background-image: radial-gradient(circle, rgba(255,255,255,0.03) 1px, transparent 1px);
   background-size: 24px 24px;
 }

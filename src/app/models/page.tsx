@@ -67,10 +67,10 @@ function shortModel(m: string): string {
 
 function sourceColor(source: string): string {
   switch (source) {
-    case 'cli': return 'text-ctp-mauve bg-ctp-mauve/10 border-ctp-mauve/20';
-    case 'telegram': return 'text-ctp-sky bg-ctp-sky/10 border-ctp-sky/20';
-    case 'cron': return 'text-ctp-yellow bg-ctp-yellow/10 border-ctp-yellow/20';
-    default: return 'text-ctp-overlay2 bg-ctp-overlay2/10 border-ctp-overlay2/20';
+    case 'cli': return 'text-purple-400 bg-indigo-500/10 border-indigo-400/20';
+    case 'telegram': return 'text-sky-400 bg-sky-400/10 border-sky-400/20';
+    case 'cron': return 'text-amber-400 bg-amber-400/10 border-amber-400/20';
+    default: return 'text-neutral-400 bg-neutral-400/10 border-neutral-400/20';
   }
 }
 
@@ -105,7 +105,7 @@ function ModelSparkline({ model, byDay }: { model: string; byDay: DayEntry[] }) 
         return (
           <div
             key={day}
-            className={`w-2 rounded-sm ${count > 0 ? 'bg-ctp-mauve/50' : 'bg-ctp-surface0/50'}`}
+            className={`w-2 rounded-sm ${count > 0 ? 'bg-indigo-500/50' : 'bg-white/[0.04]'}`}
             style={{ height: `${h}px` }}
             title={`${day}: ${count} sessions`}
           />
@@ -133,9 +133,9 @@ export default function ModelsPage() {
   if (loading) {
     return (
       <div className="max-w-5xl mx-auto animate-pulse">
-        <div className="h-8 bg-ctp-surface0/50 rounded-lg w-48 mb-6" />
+        <div className="h-8 bg-white/[0.04] rounded-lg w-48 mb-6" />
         <div className="space-y-4">
-          {[...Array(3)].map((_, i) => <div key={i} className="h-48 bg-ctp-surface0/40 rounded-xl" />)}
+          {[...Array(3)].map((_, i) => <div key={i} className="h-48 bg-white/[0.03] rounded-xl" />)}
         </div>
       </div>
     );
@@ -148,8 +148,8 @@ export default function ModelsPage() {
   return (
     <div className="max-w-5xl mx-auto">
       <div className="mb-5">
-        <div className="flex items-center gap-3"><Cpu size={20} className="text-ctp-mauve" /><h1 className="text-xl font-bold text-ctp-text">Models</h1></div>
-        <p className="text-sm text-ctp-overlay1 mt-0.5">
+        <div className="flex items-center gap-3"><Cpu size={20} className="text-purple-400" /><h1 className="text-xl font-bold text-white">Models</h1></div>
+        <p className="text-sm text-neutral-500 mt-0.5">
           {data.models.length} models used · default: {shortModel(data.defaultModel)}
         </p>
       </div>
@@ -162,29 +162,29 @@ export default function ModelsPage() {
           const recent = data.recentByModel[m.model] || [];
 
           return (
-            <div key={m.model} className="rounded-xl border border-ctp-surface0 bg-ctp-surface0/30 p-5">
+            <div key={m.model} className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
               {/* Model header */}
               <div className="flex items-start justify-between mb-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h2 className="text-base font-bold text-ctp-text">{shortModel(m.model)}</h2>
+                    <h2 className="text-base font-bold text-white">{shortModel(m.model)}</h2>
                     {isDefault && (
-                      <span className="flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded bg-ctp-mauve/10 text-ctp-mauve border border-ctp-mauve/30">
+                      <span className="flex items-center gap-1 text-[10px] font-medium px-1.5 py-0.5 rounded bg-indigo-500/10 text-purple-400 border border-indigo-500/20">
                         <Star size={9} /> default
                       </span>
                     )}
                   </div>
-                  <p className="text-[11px] text-ctp-overlay1 mt-0.5 font-mono">{m.model}</p>
+                  <p className="text-[11px] text-neutral-500 mt-0.5 font-mono">{m.model}</p>
                 </div>
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-ctp-text">{pct}%</p>
-                  <p className="text-[10px] text-ctp-overlay0">{m.sessions} sessions</p>
+                  <p className="text-2xl font-bold text-white">{pct}%</p>
+                  <p className="text-[10px] text-neutral-600">{m.sessions} sessions</p>
                 </div>
               </div>
 
               {/* Usage bar */}
-              <div className="h-1.5 bg-ctp-surface0/50 rounded-full overflow-hidden mb-4">
-                <div className="h-full bg-ctp-mauve/50 rounded-full" style={{ width: `${pct}%` }} />
+              <div className="h-1.5 bg-white/[0.04] rounded-full overflow-hidden mb-4">
+                <div className="h-full bg-indigo-500/50 rounded-full" style={{ width: `${pct}%` }} />
               </div>
 
               {/* Stats grid */}
@@ -201,14 +201,14 @@ export default function ModelsPage() {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {/* By source */}
                 <div>
-                  <p className="text-[10px] font-medium text-ctp-overlay0 uppercase tracking-wider mb-2">By Source</p>
+                  <p className="text-[10px] font-medium text-neutral-600 uppercase tracking-wider mb-2">By Source</p>
                   <div className="space-y-1.5">
                     {sources.map((s: SourceBreakdown) => (
                       <div key={s.source} className="flex items-center justify-between">
                         <span className={`text-[10px] font-medium px-1.5 py-0.5 rounded border ${sourceColor(s.source)}`}>
                           {s.source}
                         </span>
-                        <span className="text-xs text-ctp-overlay2 font-mono">{s.sessions}</span>
+                        <span className="text-xs text-neutral-400 font-mono">{s.sessions}</span>
                       </div>
                     ))}
                   </div>
@@ -216,20 +216,20 @@ export default function ModelsPage() {
 
                 {/* Daily sparkline */}
                 <div>
-                  <p className="text-[10px] font-medium text-ctp-overlay0 uppercase tracking-wider mb-2">Last 7 Days</p>
+                  <p className="text-[10px] font-medium text-neutral-600 uppercase tracking-wider mb-2">Last 7 Days</p>
                   <ModelSparkline model={m.model} byDay={data.byDay} />
-                  <p className="text-[9px] text-ctp-surface2 mt-1">Last used: {timeAgo(m.last_used)}</p>
+                  <p className="text-[9px] text-neutral-700 mt-1">Last used: {timeAgo(m.last_used)}</p>
                 </div>
 
                 {/* Recent sessions */}
                 <div>
-                  <p className="text-[10px] font-medium text-ctp-overlay0 uppercase tracking-wider mb-2">Recent</p>
+                  <p className="text-[10px] font-medium text-neutral-600 uppercase tracking-wider mb-2">Recent</p>
                   <div className="space-y-1">
                     {recent.map((s: RecentSession) => (
                       <Link
                         key={s.id}
                         href={`/session/${s.id}`}
-                        className="block text-[11px] text-ctp-overlay2 hover:text-ctp-subtext1 truncate"
+                        className="block text-[11px] text-neutral-400 hover:text-neutral-200 truncate"
                       >
                         {s.title || s.id}
                       </Link>
@@ -248,8 +248,8 @@ export default function ModelsPage() {
 function Stat({ icon, label, value }: { icon: React.ReactNode; label: string; value: string }) {
   return (
     <div>
-      <div className="flex items-center gap-1 text-ctp-overlay0 mb-0.5">{icon}<span className="text-[9px]">{label}</span></div>
-      <p className="text-sm font-bold text-ctp-subtext1">{value}</p>
+      <div className="flex items-center gap-1 text-neutral-600 mb-0.5">{icon}<span className="text-[9px]">{label}</span></div>
+      <p className="text-sm font-bold text-neutral-200">{value}</p>
     </div>
   );
 }
