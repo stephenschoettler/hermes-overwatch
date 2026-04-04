@@ -6,19 +6,16 @@ Monitor sessions, browse history, manage cron jobs, view skills and memory, trac
 
 ---
 
-## Screenshots
+## Security Notes
 
-![Overview](docs/screenshots/overview.png)
-*Overview — active sessions, token usage, daily activity, cron status*
+Overwatch reads directly from your local Hermes home directory, which may contain session transcripts, memory, configuration, logs, cron metadata, and other sensitive operational data.
 
-![Sessions](docs/screenshots/sessions.png)
-*Sessions — sortable table with context fill, token counts, source badges*
+Before exposing Overwatch beyond localhost:
+- set `OVERWATCH_PASSWORD`
+- review the data visible in Memory, Config, and System pages
+- verify screenshots and docs do not include hostnames, local paths, process IDs, session IDs, or token-like strings
 
-![Analytics](docs/screenshots/analytics.png)
-*Analytics — sessions, tokens, and activity broken down by day, source, and model*
-
-![System](docs/screenshots/system.png)
-*System — gateway status, resource usage, platform adapters, log viewer*
+This repo intentionally does not ship live dashboard screenshots until they are sanitized.
 
 ---
 
@@ -37,8 +34,8 @@ Monitor sessions, browse history, manage cron jobs, view skills and memory, trac
 
 ```bash
 # Clone
-git clone https://github.com/your-username/overwatch.git
-cd overwatch
+git clone https://github.com/stephenschoettler/Hermes-Overwatch.git
+cd Hermes-Overwatch
 
 # Install
 npm install
