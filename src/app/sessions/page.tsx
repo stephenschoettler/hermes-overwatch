@@ -276,12 +276,13 @@ export default function SessionsPage() {
       {/* Sessions table */}
       <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
         {/* Table header */}
-        <div className="hidden sm:grid grid-cols-[1fr_140px_180px_80px_100px_100px] gap-3 px-4 py-2.5 border-b border-white/[0.06] text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">
+        <div className="hidden sm:grid grid-cols-[1fr_140px_180px_80px_80px_80px_100px] gap-3 px-4 py-2.5 border-b border-white/[0.06] text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">
           <div>Agent</div>
           <div>Model</div>
           <div>Context Fill</div>
           <div className="text-right">Tokens</div>
           <div className="text-center">Type</div>
+          <div className="text-center">Status</div>
           <div className="text-right">Last Active</div>
         </div>
 
@@ -304,7 +305,7 @@ export default function SessionsPage() {
                 <Link
                   key={s.id}
                   href={`/session/${s.id}`}
-                  className="grid grid-cols-1 sm:grid-cols-[1fr_140px_180px_80px_100px_100px] gap-1 sm:gap-3 px-4 py-3 hover:bg-white/[0.04] transition-colors items-center group"
+                  className="grid grid-cols-1 sm:grid-cols-[1fr_140px_180px_80px_80px_80px_100px] gap-1 sm:gap-3 px-4 py-3 hover:bg-white/[0.04] transition-colors items-center group"
                 >
                   {/* Agent */}
                   <div className="flex items-center gap-3 min-w-0">
@@ -346,15 +347,20 @@ export default function SessionsPage() {
 
                   {/* Type badge */}
                   <div className="hidden sm:flex justify-center">
+                    <span className={`text-[10px] font-bold px-2.5 py-1 rounded border ${type.color}`}>
+                      {type.label}
+                    </span>
+                  </div>
+
+                  {/* Status */}
+                  <div className="hidden sm:flex justify-center">
                     {isActive ? (
-                      <span className="flex items-center gap-1.5 text-[10px] font-bold px-2.5 py-1 rounded border bg-green-400/10 text-green-400 border-green-400/30">
+                      <span className="flex items-center gap-1.5 text-[10px] font-medium text-green-400">
                         <span className="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot" />
-                        ACTIVE
+                        Active
                       </span>
                     ) : (
-                      <span className={`text-[10px] font-bold px-2.5 py-1 rounded border ${type.color}`}>
-                        {type.label}
-                      </span>
+                      <span className="text-[10px] text-neutral-600">Idle</span>
                     )}
                   </div>
 
@@ -366,13 +372,12 @@ export default function SessionsPage() {
 
                   {/* Mobile summary */}
                   <div className="sm:hidden flex items-center gap-2 text-[10px] text-neutral-600">
-                    {isActive ? (
-                      <span className="flex items-center gap-1 font-bold px-1.5 py-0.5 rounded border bg-green-400/10 text-green-400 border-green-400/30">
+                    <span className={`font-bold px-1.5 py-0.5 rounded border ${type.color}`}>{type.label}</span>
+                    {isActive && (
+                      <span className="flex items-center gap-1 text-green-400 font-medium">
                         <span className="w-1.5 h-1.5 rounded-full bg-green-400 pulse-dot" />
-                        ACTIVE
+                        Active
                       </span>
-                    ) : (
-                      <span className={`font-bold px-1.5 py-0.5 rounded border ${type.color}`}>{type.label}</span>
                     )}
                     <span>{shortModel(s.model)}</span>
                     <span>·</span>
