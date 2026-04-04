@@ -81,14 +81,14 @@ function DelegationCard({ d }: { d: DelegationCall }) {
       </button>
 
       {expanded && (
-        <div className="px-4 pb-4 border-t border-white/[0.06]/50 pt-3 space-y-3">
+        <div className="px-4 pb-4 border-t border-white/[0.06] pt-3 space-y-3">
           {/* Batch tasks */}
           {d.tasks.length > 0 && (
             <div>
               <p className="text-[10px] text-neutral-600 uppercase tracking-wider mb-1.5">Tasks</p>
               <div className="space-y-1.5">
                 {d.tasks.map((t, i) => (
-                  <div key={i} className="flex items-start gap-2 px-2.5 py-1.5 rounded bg-white/[0.02] border border-white/[0.06]/50">
+                  <div key={i} className="flex items-start gap-2 px-2.5 py-1.5 rounded bg-white/[0.02] border border-white/[0.06]">
                     <span className="text-[10px] text-neutral-700 font-mono mt-0.5">{i + 1}.</span>
                     <div className="flex-1 min-w-0">
                       <p className="text-[11px] text-neutral-300">{t.goal}</p>

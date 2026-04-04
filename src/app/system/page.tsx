@@ -53,7 +53,7 @@ function UsageBar({ percent, color = 'indigo' }: { percent: number; color?: stri
 function ConfirmDialog({ message, onConfirm, onCancel }: { message: string; onConfirm: () => void; onCancel: () => void }) {
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm">
-      <div className="bg-white/[0.04] border border-white/[0.08]/70 rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
+      <div className="bg-white/[0.04] border border-white/[0.08] rounded-xl p-6 max-w-sm w-full mx-4 shadow-2xl">
         <div className="flex items-start gap-3 mb-4">
           <AlertTriangle size={18} className="text-amber-400 mt-0.5 shrink-0" />
           <p className="text-sm text-neutral-200">{message}</p>

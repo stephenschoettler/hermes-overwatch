@@ -52,7 +52,7 @@ function SkillCard({ skill, onSelect }: { skill: SkillInfo; onSelect: (path: str
   return (
     <button
       onClick={() => onSelect(skill.path)}
-      className="w-full text-left px-3 py-2.5 rounded-lg border border-white/[0.06]/50 hover:border-indigo-500/20 hover:bg-white/[0.04] transition-all group"
+      className="w-full text-left px-3 py-2.5 rounded-lg border border-white/[0.06] hover:border-indigo-500/20 hover:bg-white/[0.04] transition-all group"
     >
       <div className="flex items-start gap-2.5">
         <div className="w-6 h-6 rounded bg-indigo-500/10 border border-indigo-500/20 flex items-center justify-center flex-shrink-0 mt-0.5">

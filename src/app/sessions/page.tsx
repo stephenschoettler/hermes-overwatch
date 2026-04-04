@@ -4,6 +4,7 @@ import { useState, useEffect, useCallback } from 'react';
 import Link from 'next/link';
 import {
   Monitor, Search, ChevronLeft, ChevronRight, X, RefreshCw, Clock,
+  ChevronUp, ChevronDown, ChevronsUpDown,
 } from 'lucide-react';
 
 interface Session {
@@ -147,10 +148,12 @@ export default function SessionsPage() {
   const [search, setSearch] = useState('');
   const [searchInput, setSearchInput] = useState('');
   const [refreshing, setRefreshing] = useState(false);
+  const [sortKey, setSortKey] = useState('started_at');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('desc');
 
   const fetchSessions = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams({ page: String(page), limit: '25' });
+    const params = new URLSearchParams({ page: String(page), limit: '25', sort: sortKey, dir: sortDir });
     if (source) params.set('source', source);
     if (model) params.set('model', model);
     if (search) params.set('q', search);
@@ -160,7 +163,17 @@ export default function SessionsPage() {
       setData(await res.json());
     } catch {}
     setLoading(false);
-  }, [page, source, model, search]);
+  }, [page, source, model, search, sortKey, sortDir]);
+
+  const handleSort = (key: string) => {
+    if (key === sortKey) {
+      setSortDir(d => d === 'desc' ? 'asc' : 'desc');
+    } else {
+      setSortKey(key);
+      setSortDir('desc');
+    }
+    setPage(1);
+  };
 
   useEffect(() => { fetchSessions(); }, [fetchSessions]);
 
@@ -277,13 +290,32 @@ export default function SessionsPage() {
       <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
         {/* Table header */}
         <div className="hidden sm:grid grid-cols-[1fr_140px_180px_80px_80px_80px_100px] gap-3 px-4 py-2.5 border-b border-white/[0.06] text-[10px] font-semibold text-neutral-500 uppercase tracking-wider">
-          <div>Agent</div>
-          <div>Model</div>
-          <div>Context Fill</div>
-          <div className="text-right">Tokens</div>
-          <div className="text-center">Type</div>
-          <div className="text-center">Status</div>
-          <div className="text-right">Last Active</div>
+          {([
+            ['title',      'Agent',       ''],
+            ['model',      'Model',       ''],
+            ['tokens',     'Context Fill',''],
+            ['tokens',     'Tokens',      'text-right'],
+            ['source',     'Type',        'text-center'],
+            ['status',     'Status',      'text-center'],
+            ['started_at', 'Last Active', 'text-right'],
+          ] as [string | null, string, string][]).map(([key, label, align]) =>
+            key ? (
+              <button
+                key={label}
+                onClick={() => handleSort(key)}
+                className={`flex items-center gap-1 hover:text-white transition-colors
+                  ${align.includes('right') ? 'justify-end' : align.includes('center') ? 'justify-center' : ''}
+                  ${key === sortKey ? 'text-indigo-400' : ''}`}
+              >
+                {label}
+                {key === sortKey
+                  ? sortDir === 'desc' ? <ChevronDown size={10} /> : <ChevronUp size={10} />
+                  : <ChevronsUpDown size={10} className="opacity-40" />}
+              </button>
+            ) : (
+              <div key={label} className={align}>{label}</div>
+            )
+          )}
         </div>
 
         {loading && !data ? (

@@ -115,7 +115,7 @@ function ConfigSection({ sectionKey, data, defaultOpen = false }: {
         {expanded ? <ChevronDown size={13} className="text-neutral-600" /> : <ChevronRight size={13} className="text-neutral-600" />}
       </button>
       {expanded && (
-        <div className="px-5 pb-4 border-t border-white/[0.06]/50">
+        <div className="px-5 pb-4 border-t border-white/[0.06]">
           <div className="mt-3">
             {renderValue(data)}
           </div>

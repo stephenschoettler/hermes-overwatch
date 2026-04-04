@@ -6,6 +6,19 @@ Monitor sessions, browse history, manage cron jobs, view skills and memory, trac
 
 ---
 
+## Screenshots
+
+![Overview](docs/screenshots/overview.png)
+*Overview — active sessions, token usage, daily activity, cron status*
+
+![Sessions](docs/screenshots/sessions.png)
+*Sessions — sortable table with context fill, token counts, source badges*
+
+![Analytics](docs/screenshots/analytics.png)
+*Analytics — sessions, tokens, and activity broken down by day, source, and model*
+
+---
+
 ## Features
 
 - **Session Browser** — search and browse conversation history with full transcript viewer

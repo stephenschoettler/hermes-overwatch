@@ -52,7 +52,7 @@ function PluginCard({ plugin }: { plugin: PluginInfo }) {
 
   return (
     <div className={`rounded-lg border bg-white/[0.02] transition-colors ${
-      plugin.enabled ? 'border-white/[0.06] hover:border-white/[0.08]' : 'border-white/[0.06]/40 opacity-50'
+      plugin.enabled ? 'border-white/[0.06] hover:border-white/[0.08]' : 'border-white/[0.04] opacity-50'
     }`}>
       <button
         onClick={() => setExpanded(!expanded)}
@@ -93,7 +93,7 @@ function PluginCard({ plugin }: { plugin: PluginInfo }) {
       </button>
 
       {expanded && (
-        <div className="px-4 pb-4 border-t border-white/[0.06]/50 pt-3 space-y-3">
+        <div className="px-4 pb-4 border-t border-white/[0.06] pt-3 space-y-3">
           {/* Hooks */}
           {plugin.hooks.length > 0 && (
             <div>

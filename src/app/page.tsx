@@ -169,9 +169,6 @@ export default function OverviewPage() {
       <div className="flex items-center justify-between">
         <div>
           <div className="flex items-center gap-3"><LayoutDashboard size={20} className="text-purple-400" /><h1 className="text-xl font-bold text-white">Overview</h1></div>
-          <p className="text-sm text-neutral-500 mt-0.5">
-            {stats.config.model} · {stats.config.provider}
-          </p>
         </div>
 
       </div>
@@ -337,6 +334,7 @@ export default function OverviewPage() {
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
           <p className="text-xs font-medium text-neutral-400 mb-3">System</p>
           <div className="space-y-2.5 text-xs">
+            <SysRow label="Model" value={`${stats.config.model} · ${stats.config.provider}`} />
             <SysRow label="Gateway" value={gatewayOk ? `PID ${stats.gateway.pid}` : 'offline'} ok={gatewayOk} />
             {stats.gateway.process?.uptime && (
               <SysRow label="Uptime" value={stats.gateway.process.uptime} />
@@ -350,7 +348,7 @@ export default function OverviewPage() {
             {Object.entries(stats.gateway.platforms).map(([name, info]) => (
               <SysRow key={name} label={name} value={info.state || 'unknown'} ok={info.state === 'connected'} />
             ))}
-            <div className="border-t border-white/[0.06]/50 pt-2 mt-2" />
+            <div className="border-t border-white/[0.06] pt-2 mt-2" />
             <SysRow label="MCP Servers" value={String(stats.config.mcpServers.length)} />
             <SysRow label="state.db" value={`${stats.dbSizeMb} MB`} />
           </div>

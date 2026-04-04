@@ -199,7 +199,7 @@ export default function ToolsPage() {
                 const catColor = CATEGORY_COLORS[cat] || CATEGORY_COLORS['MCP'];
                 return (
                   <div key={cat} className="rounded-xl border border-white/[0.06] bg-white/[0.02] overflow-hidden">
-                    <div className="flex items-center gap-2.5 px-4 py-2.5 border-b border-white/[0.06]/50">
+                    <div className="flex items-center gap-2.5 px-4 py-2.5 border-b border-white/[0.06]">
                       <span className="text-neutral-500">{CATEGORY_ICONS[cat] || <Wrench size={12} />}</span>
                       <span className="text-sm font-medium text-neutral-200">{cat}</span>
                       <span className="text-[10px] text-neutral-600 font-mono ml-auto">{catTotal.toLocaleString()} calls · {tools.length} tools</span>

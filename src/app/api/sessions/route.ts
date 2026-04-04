@@ -24,6 +24,20 @@ export async function GET(req: Request) {
     const search = url.searchParams.get('q') || '';
     const offset = (page - 1) * limit;
 
+    const SORT_MAP: Record<string, string> = {
+      started_at:    's.started_at',
+      title:         's.title',
+      model:         's.model',
+      tokens:        '(s.input_tokens + s.output_tokens)',
+      message_count: 's.message_count',
+      source:        's.source',
+      status:        '(CASE WHEN s.ended_at IS NULL THEN 1 ELSE 0 END)',
+    };
+    const sortKey = url.searchParams.get('sort') || 'started_at';
+    const sortCol = SORT_MAP[sortKey] ?? 's.started_at';
+    const rawDir  = url.searchParams.get('dir') || 'desc';
+    const sortDir = rawDir === 'asc' ? 'ASC' : 'DESC';
+
     let where = 'WHERE 1=1';
     const params: unknown[] = [];
 
@@ -72,7 +86,7 @@ export async function GET(req: Request) {
         s.parent_session_id
       FROM sessions s
       ${where}
-      ORDER BY s.started_at DESC
+      ORDER BY ${sortCol} ${sortDir}
       LIMIT ? OFFSET ?
     `).all(...params, limit, offset);
 

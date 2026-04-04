@@ -205,7 +205,7 @@ function JobCard({ job, outputs }: { job: CronJob; outputs: CronOutput[] }) {
   const [showPrompt, setShowPrompt] = useState(false);
 
   return (
-    <div className={`rounded-xl border bg-white/[0.02] ${job.enabled ? 'border-white/[0.06]' : 'border-white/[0.06]/50 opacity-60'}`}>
+    <div className={`rounded-xl border bg-white/[0.02] ${job.enabled ? 'border-white/[0.06]' : 'border-white/[0.06] opacity-60'}`}>
       <div
         className="flex items-center gap-4 px-5 py-4 cursor-pointer hover:bg-white/[0.02] transition-colors"
         onClick={() => setExpanded(!expanded)}
@@ -235,7 +235,7 @@ function JobCard({ job, outputs }: { job: CronJob; outputs: CronOutput[] }) {
       </div>
 
       {expanded && (
-        <div className="px-5 pb-5 border-t border-white/[0.06]/50">
+        <div className="px-5 pb-5 border-t border-white/[0.06]">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-4">
             <TimingItem label="Last Run" value={timeAgo(job.last_run_at)} />
             <TimingItem label="Next Run" value={timeUntil(job.next_run_at)} />
@@ -500,12 +500,12 @@ function DelegationCard({ d }: { d: DelegationCall }) {
         {expanded ? <ChevronDown size={12} className="text-neutral-600" /> : <ChevronRight size={12} className="text-neutral-600" />}
       </button>
       {expanded && (
-        <div className="px-4 pb-4 border-t border-white/[0.06]/50 pt-3 space-y-3">
+        <div className="px-4 pb-4 border-t border-white/[0.06] pt-3 space-y-3">
           {d.tasks.length > 0 && (
             <div>
               <p className="text-[10px] text-neutral-600 uppercase tracking-wider mb-1.5">Tasks</p>
               {d.tasks.map((t, i) => (
-                <div key={i} className="flex items-start gap-2 px-2.5 py-1.5 rounded bg-white/[0.02] border border-white/[0.06]/50 mb-1">
+                <div key={i} className="flex items-start gap-2 px-2.5 py-1.5 rounded bg-white/[0.02] border border-white/[0.06] mb-1">
                   <span className="text-[10px] text-neutral-700 font-mono mt-0.5">{i + 1}.</span>
                   <div className="flex-1 min-w-0">
                     <p className="text-[11px] text-neutral-300">{t.goal}</p>
@@ -574,7 +574,7 @@ function CodeExecTab({ data }: { data: CodeExecData }) {
                     <span className="text-[10px] text-neutral-600 flex-shrink-0">{timeAgo(ex.timestamp)}</span>
                   </button>
                   {expandedIdx === i && (
-                    <div className="px-4 pb-3 border-t border-white/[0.06]/50 pt-2">
+                    <div className="px-4 pb-3 border-t border-white/[0.06] pt-2">
                       <pre className="text-[10px] font-mono text-neutral-400 bg-black/20 rounded-lg p-3 overflow-auto max-h-48 whitespace-pre-wrap leading-relaxed">
                         {ex.code_preview}{ex.code_preview.length >= 300 ? '\n...' : ''}
                       </pre>

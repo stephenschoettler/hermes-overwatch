@@ -134,7 +134,7 @@ function JobCard({ job, outputs }: { job: CronJob; outputs: CronOutput[] }) {
   const [showPrompt, setShowPrompt] = useState(false);
 
   return (
-    <div className={`rounded-xl border bg-white/[0.02] ${job.enabled ? 'border-white/[0.06]' : 'border-white/[0.06]/50 opacity-60'}`}>
+    <div className={`rounded-xl border bg-white/[0.02] ${job.enabled ? 'border-white/[0.06]' : 'border-white/[0.06] opacity-60'}`}>
       {/* Header */}
       <div
         className="flex items-center gap-4 px-5 py-4 cursor-pointer hover:bg-white/[0.02] transition-colors"
@@ -172,7 +172,7 @@ function JobCard({ job, outputs }: { job: CronJob; outputs: CronOutput[] }) {
 
       {/* Expanded content */}
       {expanded && (
-        <div className="px-5 pb-5 border-t border-white/[0.06]/50">
+        <div className="px-5 pb-5 border-t border-white/[0.06]">
           {/* Timing info */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 py-4">
             <TimingItem label="Last Run" value={timeAgo(job.last_run_at)} />
