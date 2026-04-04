@@ -3,8 +3,8 @@
 import { useEffect, useMemo, useState } from 'react';
 import Link from 'next/link';
 import {
-  CheckCircle2, CircleSlash, ClipboardList, Clock3, Loader2, Search, SquareCheckBig,
-  ChevronDown, ChevronRight, ArrowRight,
+  ArrowRight, CheckCircle2, ChevronDown, ChevronRight, CircleSlash, ClipboardList,
+  Clock3, Loader2, Search, Sparkles, SquareCheckBig, TrendingUp,
 } from 'lucide-react';
 
 type TodoStatus = 'pending' | 'in_progress' | 'completed' | 'cancelled';
@@ -24,6 +24,13 @@ interface TodoSnapshot {
   total: number;
 }
 
+interface TodoDelta {
+  status_changes: { id: string; content: string; from: TodoStatus; to: TodoStatus }[];
+  newly_completed: TodoItem[];
+  newly_added: TodoItem[];
+  removed: TodoItem[];
+}
+
 interface TaskSession {
   session_id: string;
   source: string;
@@ -38,13 +45,16 @@ interface TaskSession {
   total_tasks: number;
   counts: Record<TodoStatus, number>;
   todos: TodoItem[];
+  preview: TodoItem[];
   history: TodoSnapshot[];
+  delta: TodoDelta | null;
 }
 
 interface BoardTask extends TodoItem {
   session_id: string;
   title: string;
   source: string;
+  timestamp?: string;
 }
 
 interface TasksData {
@@ -57,10 +67,12 @@ interface TasksData {
     completed: number;
     cancelled: number;
     updated_today: number;
+    recently_completed: number;
   };
   sessions: TaskSession[];
   tasksBySource: Record<string, number>;
   globalBoard: Record<TodoStatus, BoardTask[]>;
+  recentlyCompleted: BoardTask[];
   hours: number;
 }
 
@@ -122,6 +134,46 @@ function MetricCard({ label, value, tone }: { label: string; value: string | num
   );
 }
 
+function TodoPreview({ items }: { items: TodoItem[] }) {
+  if (items.length === 0) return null;
+  return (
+    <div className="mt-2 space-y-1">
+      {items.map((todo) => (
+        <div key={todo.id} className="flex items-start gap-2 text-[11px] text-neutral-400">
+          <span className={`mt-0.5 ${STATUS_META[todo.status].color.split(' ')[0]}`}>{STATUS_META[todo.status].icon}</span>
+          <span className="line-clamp-1">{todo.content}</span>
+        </div>
+      ))}
+    </div>
+  );
+}
+
+function DeltaPills({ delta }: { delta: TodoDelta | null }) {
+  if (!delta) return null;
+  const hasAnything = delta.newly_completed.length || delta.newly_added.length || delta.status_changes.length || delta.removed.length;
+  if (!hasAnything) return null;
+
+  return (
+    <div className="px-4 pb-3 -mt-1 flex flex-wrap gap-1.5">
+      {delta.newly_completed.length > 0 && (
+        <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded border text-green-400 bg-green-400/10 border-green-400/20">
+          <Sparkles size={10} /> +{delta.newly_completed.length} completed
+        </span>
+      )}
+      {delta.newly_added.length > 0 && (
+        <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded border text-sky-400 bg-sky-400/10 border-sky-400/20">
+          <TrendingUp size={10} /> +{delta.newly_added.length} added
+        </span>
+      )}
+      {delta.status_changes.length > 0 && (
+        <span className="inline-flex items-center gap-1 text-[10px] px-1.5 py-0.5 rounded border text-purple-400 bg-indigo-500/10 border-indigo-400/20">
+          {delta.status_changes.length} moved
+        </span>
+      )}
+    </div>
+  );
+}
+
 function SessionCard({ session }: { session: TaskSession }) {
   const [expanded, setExpanded] = useState(false);
   const grouped = {
@@ -152,6 +204,7 @@ function SessionCard({ session }: { session: TaskSession }) {
             <span>· updated {timeAgo(session.last_update)}</span>
             <span>· {shortModel(session.model)}</span>
           </div>
+          <TodoPreview items={session.preview} />
         </div>
         <Link
           href={`/session/${session.session_id}`}
@@ -171,8 +224,29 @@ function SessionCard({ session }: { session: TaskSession }) {
         ))}
       </div>
 
+      <DeltaPills delta={session.delta} />
+
       {expanded && (
         <div className="border-t border-white/[0.06] px-4 py-3 space-y-4">
+          {session.delta && (session.delta.newly_completed.length > 0 || session.delta.status_changes.length > 0) && (
+            <div>
+              <p className="text-[10px] text-neutral-600 uppercase tracking-wider mb-2">Latest Changes</p>
+              <div className="space-y-1.5">
+                {session.delta.newly_completed.map((todo) => (
+                  <div key={`completed-${todo.id}`} className="rounded-lg border border-green-400/20 bg-green-400/5 px-3 py-2 text-xs text-neutral-200">
+                    Completed: {todo.content}
+                  </div>
+                ))}
+                {session.delta.status_changes.filter(change => change.to !== 'completed').map((change) => (
+                  <div key={`change-${change.id}`} className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2 text-xs text-neutral-300">
+                    {change.content}
+                    <span className="text-neutral-600"> · {change.from} → {change.to}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
           {(['in_progress', 'pending', 'completed', 'cancelled'] as TodoStatus[]).map((status) => (
             grouped[status].length > 0 ? (
               <div key={status}>
@@ -215,7 +289,7 @@ function SessionCard({ session }: { session: TaskSession }) {
   );
 }
 
-function BoardColumn({ title, status, items }: { title: string; status: TodoStatus; items: BoardTask[] }) {
+function BoardColumn({ title, status, items, emptyText = 'No tasks' }: { title: string; status: TodoStatus; items: BoardTask[]; emptyText?: string }) {
   return (
     <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
       <div className="flex items-center justify-between mb-3">
@@ -227,13 +301,14 @@ function BoardColumn({ title, status, items }: { title: string; status: TodoStat
       </div>
       <div className="space-y-2">
         {items.length === 0 ? (
-          <p className="text-[11px] text-neutral-600">No tasks</p>
+          <p className="text-[11px] text-neutral-600">{emptyText}</p>
         ) : items.map((item) => (
-          <div key={`${item.session_id}:${item.id}`} className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
+          <div key={`${item.session_id}:${item.id}:${item.timestamp || ''}`} className="rounded-lg border border-white/[0.06] bg-white/[0.02] px-3 py-2">
             <p className="text-xs text-neutral-200 break-words">{item.content}</p>
             <div className="flex items-center gap-2 mt-1.5 flex-wrap text-[10px] text-neutral-600">
               <span className={`px-1.5 py-0.5 rounded border ${sourceColor(item.source)}`}>{item.source}</span>
               <span className="truncate max-w-[180px]">{item.title}</span>
+              {item.timestamp && <span>{timeAgo(item.timestamp)}</span>}
             </div>
           </div>
         ))}
@@ -270,7 +345,11 @@ export default function TasksPage() {
     if (!data) return [];
     const q = query.trim().toLowerCase();
     return data.sessions.filter((session) => {
-      const hay = `${session.title} ${session.source} ${session.model || ''} ${session.todos.map(t => t.content).join(' ')}`.toLowerCase();
+      const deltaText = [
+        ...(session.delta?.newly_completed.map(t => t.content) || []),
+        ...(session.delta?.status_changes.map(c => c.content) || []),
+      ].join(' ');
+      const hay = `${session.title} ${session.source} ${session.model || ''} ${session.todos.map(t => t.content).join(' ')} ${deltaText}`.toLowerCase();
       const qOk = !q || hay.includes(q);
       const statusOk = statusFilter === 'all' || session.counts[statusFilter] > 0;
       return qOk && statusOk;
@@ -296,7 +375,7 @@ export default function TasksPage() {
       <div className="mb-5">
         <div className="flex items-center gap-3"><SquareCheckBig size={20} className="text-purple-400" /><h1 className="text-xl font-bold text-white">Tasks</h1></div>
         <p className="text-sm text-neutral-500 mt-0.5">
-          Visualized from Hermes todo snapshots in session history · last {Math.round(data.hours / 24)} days
+          Derived from Hermes todo snapshots in session history · last {Math.round(data.hours / 24)} days
         </p>
       </div>
 
@@ -306,7 +385,7 @@ export default function TasksPage() {
         <MetricCard label="In Progress" value={data.summary.in_progress} tone="text-amber-400" />
         <MetricCard label="Pending" value={data.summary.pending} tone="text-sky-400" />
         <MetricCard label="Completed" value={data.summary.completed} tone="text-green-400" />
-        <MetricCard label="Cancelled" value={data.summary.cancelled} tone="text-red-400" />
+        <MetricCard label="Newly Completed" value={data.summary.recently_completed} tone="text-purple-400" />
       </div>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-4">
@@ -361,6 +440,7 @@ export default function TasksPage() {
             </div>
           </div>
 
+          <BoardColumn title="Recently Completed" status="completed" items={data.recentlyCompleted} emptyText="No recent completions detected" />
           <BoardColumn title="In Progress" status="in_progress" items={data.globalBoard.in_progress} />
           <BoardColumn title="Pending" status="pending" items={data.globalBoard.pending} />
         </div>
