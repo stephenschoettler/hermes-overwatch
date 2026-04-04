@@ -308,7 +308,7 @@ export default function SessionsPage() {
                 >
                   {/* Agent */}
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className={`w-9 h-9 rounded-lg bg-gradient-to-br ${avatar.bg} flex items-center justify-center text-sm flex-shrink-0`}>
+                    <div className="w-9 h-9 flex items-center justify-center text-lg flex-shrink-0">
                       {avatar.emoji}
                     </div>
                     <div className="min-w-0">
