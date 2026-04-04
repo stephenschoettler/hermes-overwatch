@@ -1,36 +1,105 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# 👁️ Overwatch
 
-## Getting Started
+A local operations dashboard for [Hermes Agent](https://github.com/hermes-agent/hermes-agent).
 
-First, run the development server:
+Monitor sessions, browse history, manage cron jobs, view skills and memory, track token costs — all from one place.
+
+---
+
+## Features
+
+- **Session Browser** — search and browse conversation history with full transcript viewer
+- **Cron Management** — view scheduled jobs, trigger runs, pause/resume
+- **Skills Browser** — explore installed skills by category
+- **Memory Viewer** — see agent memory and user profile
+- **Config Viewer** — read-only config display with automatic secret redaction
+- **System Status** — health checks, disk usage, process info
+
+---
+
+## Quick Start
+
+```bash
+# Clone
+git clone https://github.com/your-username/overwatch.git
+cd overwatch
+
+# Install
+npm install
+
+# Build
+npm run build
+
+# Start
+npm start
+```
+
+Overwatch will be available at **http://localhost:3333**.
+
+It reads from `~/.hermes` by default. Set `HERMES_HOME` to point to a different Hermes installation.
+
+---
+
+## Configuration
+
+Copy `.env.example` to `.env.local` and customize:
+
+```bash
+cp .env.example .env.local
+```
+
+| Variable | Default | Description |
+|---|---|---|
+| `OVERWATCH_PASSWORD` | *(empty)* | Optional password. If set, requires login. If empty, open access. |
+| `HERMES_HOME` | `~/.hermes` | Path to the Hermes home directory |
+
+### Security
+
+- **No password set** — open access, suitable for localhost or trusted networks
+- **Password set** — cookie-based login, 30-day session, HttpOnly cookie
+- **Secret redaction** — API keys, tokens, and credentials are automatically masked in the config viewer
+- **Localhost only** — binds to `127.0.0.1` by default. Expose to your network at your own discretion.
+
+---
+
+## Development
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Runs on port 3333 in dev mode with hot reload.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+---
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## Architecture
 
-## Learn More
+- **Next.js 14** (App Router) — frontend + API routes
+- **Tailwind CSS** — dark theme UI
+- **better-sqlite3** — reads directly from Hermes `state.db` (read-only)
+- **No external database** — all data comes from the local `~/.hermes` directory
 
-To learn more about Next.js, take a look at the following resources:
+### Data Sources
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+| Source | What it provides |
+|---|---|
+| `state.db` | Sessions, messages, token counts, costs (SQLite + FTS5 search) |
+| `cron/jobs.json` | Scheduled cron jobs |
+| `config.yaml` | Agent configuration (redacted in UI) |
+| `memories/` | Agent memory and user profile |
+| `skills/` | Installed skill definitions |
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+Overwatch is **read-only** — it observes your Hermes installation, it does not modify it.
 
-## Deploy on Vercel
+---
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Requirements
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- **Node.js 18+**
+- **Hermes Agent** installed (`~/.hermes` directory exists)
+
+---
+
+## License
+
+MIT
