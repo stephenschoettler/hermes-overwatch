@@ -45,6 +45,18 @@ function LiveClock() {
   return <p className="text-[11px] text-neutral-400 font-mono pl-4 mb-1">{time}</p>;
 }
 
+function ConnectionLabel() {
+  const [host, setHost] = useState('local dashboard');
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      setHost(window.location.host || 'local dashboard');
+    }
+  }, []);
+
+  return <p className="text-[10px] text-neutral-600 mt-1.5 pl-4">{host}</p>;
+}
+
 function GatewayRestartButton() {
   const [confirming, setConfirming] = useState(false);
   const [restarting, setRestarting] = useState(false);
@@ -199,7 +211,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   <div className="w-2 h-2 rounded-full bg-green-400" />
                   <p className="text-[11px] text-neutral-400">System Online</p>
                 </div>
-                <p className="text-[10px] text-neutral-600 mt-1.5 pl-4">localhost:3333</p>
+                <ConnectionLabel />
                 <div className="pl-4">
                   <GatewayRestartButton />
                 </div>
