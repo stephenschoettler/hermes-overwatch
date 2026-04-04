@@ -8,7 +8,7 @@ import { useState, useEffect } from "react";
 import {
   LayoutDashboard, Monitor, Zap, Puzzle, Brain,
   Settings, Server, Menu, X, Activity, Cpu, BarChart3, Wrench, Plug, Users, Eye,
-  RotateCcw,
+  RotateCcw, SquareCheckBig,
 } from "lucide-react";
 
 interface NavItem {
@@ -25,6 +25,7 @@ const NAV_ITEMS: NavItem[] = [
   { href: '/models', label: 'Models', icon: Cpu },
   { href: '/analytics', label: 'Analytics', icon: BarChart3 },
   { href: '/tools', label: 'Tools', icon: Wrench },
+  { href: '/tasks', label: 'Tasks', icon: SquareCheckBig },
   { href: '/automation', label: 'Automation', icon: Zap },
   { href: '/skills', label: 'Skills', icon: Puzzle },
   { href: '/plugins', label: 'Plugins', icon: Plug },
