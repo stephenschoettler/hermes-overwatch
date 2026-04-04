@@ -8,6 +8,7 @@ import { useState, useEffect } from "react";
 import {
   LayoutDashboard, Monitor, Zap, Puzzle, Brain,
   Settings, Server, Menu, X, Activity, Cpu, BarChart3, Wrench, Plug, Users, Eye,
+  RotateCcw,
 } from "lucide-react";
 
 interface NavItem {
@@ -41,6 +42,55 @@ function LiveClock() {
     return () => clearInterval(id);
   }, []);
   return <p className="text-[11px] text-neutral-400 font-mono pl-4 mb-1">{time}</p>;
+}
+
+function GatewayRestartButton() {
+  const [confirming, setConfirming] = useState(false);
+  const [restarting, setRestarting] = useState(false);
+
+  const handleRestart = async () => {
+    setRestarting(true);
+    setConfirming(false);
+    try {
+      await fetch('/api/system/restart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ service: 'gateway' }),
+      });
+    } catch {}
+    setRestarting(false);
+  };
+
+  if (confirming) {
+    return (
+      <div className="flex items-center gap-1.5 mt-2">
+        <span className="text-[10px] text-neutral-400">Restart?</span>
+        <button
+          onClick={handleRestart}
+          className="text-[10px] px-1.5 py-0.5 rounded bg-red-500/20 text-red-400 hover:bg-red-500/30 transition-colors"
+        >
+          Yes
+        </button>
+        <button
+          onClick={() => setConfirming(false)}
+          className="text-[10px] px-1.5 py-0.5 rounded bg-white/[0.06] text-neutral-500 hover:text-neutral-300 transition-colors"
+        >
+          No
+        </button>
+      </div>
+    );
+  }
+
+  return (
+    <button
+      onClick={() => setConfirming(true)}
+      disabled={restarting}
+      className="flex items-center gap-1.5 mt-2 text-[10px] text-neutral-600 hover:text-neutral-400 transition-colors disabled:opacity-40"
+    >
+      <RotateCcw size={10} className={restarting ? 'animate-spin' : ''} />
+      {restarting ? 'Restarting…' : 'Restart gateway'}
+    </button>
+  );
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
@@ -113,7 +163,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <Eye size={24} className="text-purple-400" />
                 <div>
                   <h1 className="text-sm font-bold text-white tracking-tight">Overwatch</h1>
-                  <p className="text-[10px] text-neutral-500 tracking-wide">HERMES AGENT</p>
+                  <p className="text-[10px] text-amber-400 tracking-wide">HERMES AGENT</p>
                 </div>
               </Link>
             </div>
@@ -145,10 +195,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="px-4 pb-4 pt-3">
                 <LiveClock />
                 <div className="flex items-center gap-2 mt-1">
-                  <div className="w-2 h-2 rounded-full bg-green-400 pulse-dot" />
+                  <div className="w-2 h-2 rounded-full bg-green-400" />
                   <p className="text-[11px] text-neutral-400">System Online</p>
                 </div>
                 <p className="text-[10px] text-neutral-600 mt-1.5 pl-4">localhost:3333</p>
+                <div className="pl-4">
+                  <GatewayRestartButton />
+                </div>
               </div>
             </div>
           </aside>

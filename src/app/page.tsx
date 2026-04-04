@@ -91,7 +91,7 @@ function sourceColor(source: string): string {
 
 function StatusDot({ ok }: { ok: boolean }) {
   return (
-    <div className={`w-2 h-2 rounded-full ${ok ? 'bg-green-400 pulse-dot' : 'bg-red-500'}`} />
+    <div className={`w-2 h-2 rounded-full ${ok ? 'bg-green-400' : 'bg-red-500'}`} />
   );
 }
 
@@ -189,25 +189,25 @@ export default function OverviewPage() {
           value={String(stats.today.sessions)}
           sub={`${stats.today.messages} messages · ${stats.today.tool_calls} tools`}
           icon={<Clock size={15} />}
-          color="indigo"
+          color="blue"
         />
         <MetricCard
           label="Tokens Today"
           value={formatTokens(stats.today.input_tokens + stats.today.output_tokens)}
           sub={`${formatTokens(stats.today.input_tokens)} in · ${formatTokens(stats.today.output_tokens)} out`}
           icon={<MessageSquare size={15} />}
-          color="purple"
+          color="cyan"
         />
         <MetricCard
           label="Skills"
           value={String(stats.skillsCount)}
           sub={`${stats.crons.enabled} cron jobs active`}
           icon={<Puzzle size={15} />}
-          color="green"
+          color="red"
         />
       </div>
 
-      {/* Middle row: Activity + Models + Crons + Sources */}
+      {/* Middle row: Activity + Models + Crons + Platforms */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
         {/* Daily activity */}
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
@@ -219,7 +219,7 @@ export default function OverviewPage() {
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs font-medium text-neutral-400">Models</p>
-            <Link href="/models" className="text-[10px] text-purple-400 hover:text-indigo-300 flex items-center gap-1">
+            <Link href="/models" className="text-[10px] text-neutral-500 hover:text-neutral-300 flex items-center gap-1">
               View all <ArrowRight size={9} />
             </Link>
           </div>
@@ -247,7 +247,7 @@ export default function OverviewPage() {
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs font-medium text-neutral-400">Crons</p>
-            <Link href="/automation" className="text-[10px] text-purple-400 hover:text-indigo-300 flex items-center gap-1">
+            <Link href="/automation" className="text-[10px] text-neutral-500 hover:text-neutral-300 flex items-center gap-1">
               Manage <ArrowRight size={9} />
             </Link>
           </div>
@@ -294,7 +294,7 @@ export default function OverviewPage() {
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs font-medium text-neutral-400">Recent Activity</p>
-            <Link href="/activity" className="text-[10px] text-purple-400 hover:text-indigo-300 flex items-center gap-1">
+            <Link href="/activity" className="text-[10px] text-neutral-500 hover:text-neutral-300 flex items-center gap-1">
               View all <ArrowRight size={10} />
             </Link>
           </div>
@@ -305,7 +305,7 @@ export default function OverviewPage() {
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
           <div className="flex items-center justify-between mb-3">
             <p className="text-xs font-medium text-neutral-400">Recent Sessions</p>
-            <Link href="/sessions" className="text-[10px] text-purple-400 hover:text-indigo-300 flex items-center gap-1">
+            <Link href="/sessions" className="text-[10px] text-neutral-500 hover:text-neutral-300 flex items-center gap-1">
               View all <ArrowRight size={10} />
             </Link>
           </div>
@@ -364,9 +364,11 @@ function MetricCard({ label, value, sub, icon, color }: {
 }) {
   const colors: Record<string, string> = {
     indigo: 'text-purple-400 bg-indigo-400/10',
-    blue: 'text-blue-400 bg-blue-400/10',
+    blue:   'text-blue-400 bg-blue-400/10',
     purple: 'text-purple-400 bg-indigo-500/10',
-    green: 'text-green-400 bg-green-400/10',
+    green:  'text-green-400 bg-green-400/10',
+    cyan:   'text-cyan-400 bg-cyan-400/10',
+    red:    'text-red-400 bg-red-400/10',
   };
 
   return (

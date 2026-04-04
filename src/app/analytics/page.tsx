@@ -74,23 +74,24 @@ function shortModel(m: string): string {
 }
 
 const MODEL_COLORS: Record<string, string> = {
-  'claude-opus-4-6': 'bg-indigo-500/50',
-  'claude-sonnet-4-6': 'bg-blue-400/50',
-  'gpt-5.4': 'bg-green-400/50',
+  'claude-opus-4-6':  'bg-violet-500/70',
+  'claude-sonnet-4-6':'bg-blue-400/70',
+  'gpt-5.4':          'bg-emerald-400/70',
 };
 
 const SOURCE_COLORS: Record<string, string> = {
-  cli: 'bg-indigo-500/50',
-  cron: 'bg-amber-400/50',
-  telegram: 'bg-sky-400/50',
+  cli:      'bg-purple-500/70',
+  cron:     'bg-amber-400/70',
+  telegram: 'bg-sky-400/70',
 };
 
 const BAR_COLORS: Record<string, { bar: string; hover: string }> = {
-  indigo: { bar: 'bg-indigo-500/40', hover: 'hover:bg-indigo-500/60' },
-  purple: { bar: 'bg-indigo-500/40', hover: 'hover:bg-indigo-500/60' },
-  blue:   { bar: 'bg-blue-400/40',   hover: 'hover:bg-blue-400/60' },
-  green:  { bar: 'bg-green-400/40',  hover: 'hover:bg-green-400/60' },
-  amber:  { bar: 'bg-amber-400/40',  hover: 'hover:bg-amber-400/60' },
+  blue:   { bar: 'bg-blue-500/50',   hover: 'hover:bg-blue-500/70' },
+  violet: { bar: 'bg-violet-500/50', hover: 'hover:bg-violet-500/70' },
+  green:  { bar: 'bg-emerald-500/50',hover: 'hover:bg-emerald-500/70' },
+  amber:  { bar: 'bg-amber-400/50',  hover: 'hover:bg-amber-400/70' },
+  indigo: { bar: 'bg-indigo-500/50', hover: 'hover:bg-indigo-500/70' },
+  purple: { bar: 'bg-violet-500/50', hover: 'hover:bg-violet-500/70' },
 };
 
 function BarChart({ data, barKey, label, color = 'indigo' }: {
@@ -198,7 +199,7 @@ function HourlyChart({ data }: { data: HourlyRow[] }) {
         return (
           <div key={h} className="flex-1 flex flex-col items-center justify-end gap-0.5 h-full">
             <div
-              className={`w-full rounded-sm ${val > 0 ? 'bg-indigo-500/40' : 'bg-white/[0.02]'}`}
+              className={`w-full rounded-sm ${val > 0 ? 'bg-amber-400/50' : 'bg-white/[0.02]'}`}
               style={{ height: `${barH}px` }}
               title={`${h}:00 — ${val} sessions`}
             />
@@ -252,12 +253,12 @@ export default function AnalyticsPage() {
 
       {/* All-time totals */}
       <div className="grid grid-cols-3 sm:grid-cols-6 gap-3">
-        <TotalCard label="Sessions" value={String(t.sessions)} sub={`${avg.avg_sessions}/day avg`} />
-        <TotalCard label="Messages" value={formatTokens(t.messages)} sub={`${avg.avg_messages}/day`} />
-        <TotalCard label="Tool Calls" value={formatTokens(t.tool_calls)} sub={`${avg.avg_tools}/day`} />
-        <TotalCard label="Input Tokens" value={formatTokens(t.input_tokens)} sub={`${formatTokens(avg.avg_input_tokens)}/day`} />
-        <TotalCard label="Output Tokens" value={formatTokens(t.output_tokens)} sub={`${formatTokens(avg.avg_output_tokens)}/day`} />
-        <TotalCard label="Cache Read" value={formatTokens(t.cache_read_tokens)} sub="all time" />
+        <TotalCard label="Sessions"      value={String(t.sessions)}               sub={`${avg.avg_sessions}/day avg`}                     color="blue" />
+        <TotalCard label="Messages"      value={formatTokens(t.messages)}         sub={`${avg.avg_messages}/day`}                         color="green" />
+        <TotalCard label="Tool Calls"    value={formatTokens(t.tool_calls)}       sub={`${avg.avg_tools}/day`}                            color="amber" />
+        <TotalCard label="Input Tokens"  value={formatTokens(t.input_tokens)}     sub={`${formatTokens(avg.avg_input_tokens)}/day`}       color="violet" />
+        <TotalCard label="Output Tokens" value={formatTokens(t.output_tokens)}    sub={`${formatTokens(avg.avg_output_tokens)}/day`}      color="cyan" />
+        <TotalCard label="Cache Read"    value={formatTokens(t.cache_read_tokens)}sub="all time"                                          color="sky" />
       </div>
 
       {/* Charts row 1: Sessions + Tokens */}
@@ -266,6 +267,7 @@ export default function AnalyticsPage() {
           <p className="text-xs font-medium text-neutral-400 mb-3">Sessions per Day</p>
           <BarChart
             data={data.daily.map(d => ({ label: d.day.slice(5), value: d.sessions }))}
+            color="blue"
             barKey="sessions"
             label="Sessions"
           />
@@ -276,7 +278,7 @@ export default function AnalyticsPage() {
             data={data.daily.map(d => ({ label: d.day.slice(5), value: d.output_tokens }))}
             barKey="output_tokens"
             label="Output Tokens"
-            color="purple"
+            color="violet"
           />
         </div>
       </div>
@@ -311,7 +313,7 @@ export default function AnalyticsPage() {
             data={data.daily.map(d => ({ label: d.day.slice(5), value: d.messages }))}
             barKey="messages"
             label="Messages"
-            color="blue"
+            color="green"
           />
         </div>
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
@@ -323,11 +325,21 @@ export default function AnalyticsPage() {
   );
 }
 
-function TotalCard({ label, value, sub }: { label: string; value: string; sub: string }) {
+const TOTAL_CARD_COLORS: Record<string, { value: string; border: string }> = {
+  blue:   { value: 'text-blue-400',   border: 'border-t-blue-500/60' },
+  green:  { value: 'text-emerald-400',border: 'border-t-emerald-500/60' },
+  amber:  { value: 'text-amber-400',  border: 'border-t-amber-400/60' },
+  violet: { value: 'text-violet-400', border: 'border-t-violet-500/60' },
+  cyan:   { value: 'text-cyan-400',   border: 'border-t-cyan-400/60' },
+  sky:    { value: 'text-sky-400',    border: 'border-t-sky-400/60' },
+};
+
+function TotalCard({ label, value, sub, color }: { label: string; value: string; sub: string; color?: string }) {
+  const c = (color && TOTAL_CARD_COLORS[color]) || { value: 'text-white', border: '' };
   return (
-    <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-3">
+    <div className={`rounded-xl border border-white/[0.06] border-t-2 ${c.border} bg-white/[0.02] p-3`}>
       <p className="text-[9px] text-neutral-600 uppercase tracking-wider">{label}</p>
-      <p className="text-lg font-bold text-white mt-0.5">{value}</p>
+      <p className={`text-lg font-bold mt-0.5 ${c.value}`}>{value}</p>
       <p className="text-[10px] text-neutral-600 mt-0.5">{sub}</p>
     </div>
   );
