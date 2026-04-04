@@ -160,7 +160,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               {children}
             </main>
 
-            <div className="flex-shrink-0 border-t border-white/[0.06]/50 py-2 text-center text-[10px] text-neutral-500">
+            <div className="flex-shrink-0 border-t border-white/[0.04] py-2 text-center text-[10px] text-neutral-500">
               Overwatch v1 · Hermes
             </div>
           </div>
