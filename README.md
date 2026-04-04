@@ -17,6 +17,9 @@ Monitor sessions, browse history, manage cron jobs, view skills and memory, trac
 ![Analytics](docs/screenshots/analytics.png)
 *Analytics — sessions, tokens, and activity broken down by day, source, and model*
 
+![System](docs/screenshots/system.png)
+*System — gateway status, resource usage, platform adapters, log viewer*
+
 ---
 
 ## Features

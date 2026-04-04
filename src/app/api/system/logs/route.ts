@@ -3,6 +3,12 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { exec } from 'child_process';
 
+const TOKEN_RE = /\b\d{8,12}:[^\s`'"]{5,}/g;
+
+function redactLogs(s: string): string {
+  return s.replace(TOKEN_RE, '[token redacted]');
+}
+
 export async function GET(req: Request) {
   const url = new URL(req.url);
   const lines = Math.min(parseInt(url.searchParams.get('lines') || '50'), 200);
@@ -22,7 +28,8 @@ export async function GET(req: Request) {
     }
 
     const child = exec(cmd, { timeout: 5000 }, (error, stdout, stderr) => {
-      const logs = stdout.trim() || stderr.trim() || (error ? `Error: ${String(error)}` : '');
+      const raw = stdout.trim() || stderr.trim() || (error ? `Error: ${String(error)}` : '');
+      const logs = redactLogs(raw);
       resolve(NextResponse.json({ logs, source, timestamp: new Date().toISOString() }));
     });
     child.on('error', (err) => {

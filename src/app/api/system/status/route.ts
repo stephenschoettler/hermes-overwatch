@@ -6,6 +6,16 @@ import os from 'os';
 import fs from 'fs';
 import { hermesPath } from '@/lib/hermes';
 
+// Redact tokens/keys from strings before sending to client.
+// Matches patterns like: bot tokens (digits:alphanum), bearer tokens, api keys.
+// Match Telegram bot tokens: numeric ID + colon + anything until whitespace/quote/backtick
+// Handles standard (1234:ABC...) and partially-redacted (1234:***:ABC...) forms
+const TOKEN_RE = /\b\d{8,12}:[^\s`'"]{5,}/g;
+
+function redactString(s: string): string {
+  return s.replace(TOKEN_RE, '[token redacted]');
+}
+
 function runCmd(cmd: string): string {
   try {
     return execSync(cmd, { timeout: 5000, encoding: 'utf8' }).trim();
@@ -98,7 +108,15 @@ export async function GET() {
       gatewayProcess = {
         pid: state.pid,
         rss_mb: Math.round((rssPages * 4096) / 1024 / 1024),
-        platforms: state.platforms || {},
+        platforms: Object.fromEntries(
+          Object.entries(state.platforms || {}).map(([k, v]) => {
+            const p = v as Record<string, unknown>;
+            return [k, {
+              ...p,
+              ...(p.error_message ? { error_message: redactString(String(p.error_message)) } : {}),
+            }];
+          })
+        ),
       };
     }
   } catch {}
