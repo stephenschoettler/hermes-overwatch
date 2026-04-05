@@ -94,8 +94,9 @@ export async function GET() {
   const usedMem = totalMem - freeMem;
   const loadAvg = os.loadavg();
 
-  // Gateway service
   const gateway = getServiceStatus('hermes-gateway');
+  const overwatch = getServiceStatus('overwatch');
+  const overwatchDeploy = getServiceStatus('overwatch-deploy.service');
 
   // Gateway process details
   let gatewayProcess: Record<string, unknown> | null = null;
@@ -167,6 +168,8 @@ export async function GET() {
 
   return NextResponse.json({
     gateway,
+    overwatch,
+    overwatchDeploy,
     gatewayProcess,
     cpu: cpu !== null ? { percent: cpu } : null,
     ram,

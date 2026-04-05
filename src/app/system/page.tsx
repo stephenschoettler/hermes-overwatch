@@ -2,12 +2,14 @@
 
 import { useState, useEffect, useCallback } from 'react';
 import {
-  RefreshCw, RotateCcw, Copy, Check, AlertTriangle, X,
-  Server, Cpu, HardDrive, MemoryStick, Clock, Radio,
+  RefreshCw, RotateCcw, Copy, Check, AlertTriangle,
+  Server, Cpu, HardDrive, MemoryStick, Clock, Rocket,
 } from 'lucide-react';
 
 interface SystemStatus {
   gateway: { name: string; status: string; uptime: string };
+  overwatch: { name: string; status: string; uptime: string };
+  overwatchDeploy: { name: string; status: string; uptime: string };
   gatewayProcess: { pid: number; rss_mb: number; platforms: Record<string, { state?: string; error_message?: string }> } | null;
   cpu: { percent: number } | null;
   ram: { used: number; total: number; percent: number };
@@ -82,6 +84,8 @@ export default function SystemPage() {
   const [copied, setCopied] = useState(false);
   const [confirm, setConfirm] = useState<{ message: string; action: () => void } | null>(null);
   const [restarting, setRestarting] = useState<string | null>(null);
+  const [deploying, setDeploying] = useState(false);
+  const [actionMessage, setActionMessage] = useState<{ kind: 'success' | 'error'; text: string } | null>(null);
 
   const fetchStatus = useCallback(async () => {
     try {
@@ -124,14 +128,20 @@ export default function SystemPage() {
 
   const doRestart = async (service: string) => {
     setRestarting(service);
+    setActionMessage(null);
     try {
-      await fetch('/api/system/restart', {
+      const res = await fetch('/api/system/restart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ service }),
       });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      setActionMessage({ kind: 'success', text: `${service === 'gateway' ? 'Gateway' : 'Overwatch'} restart triggered.` });
       setTimeout(fetchStatus, 3000);
-    } catch {}
+    } catch (e) {
+      setActionMessage({ kind: 'error', text: e instanceof Error ? e.message : 'Restart failed' });
+    }
     setTimeout(() => setRestarting(null), 2000);
   };
 
@@ -139,6 +149,30 @@ export default function SystemPage() {
     setConfirm({
       message: `Restart ${label}?`,
       action: () => { setConfirm(null); doRestart(service); },
+    });
+  };
+
+  const doDeploy = async () => {
+    setDeploying(true);
+    setActionMessage(null);
+    try {
+      const res = await fetch('/api/system/deploy', { method: 'POST' });
+      const data = await res.json().catch(() => ({}));
+      if (!res.ok) throw new Error(data.error || `HTTP ${res.status}`);
+      setActionMessage({ kind: 'success', text: 'Overwatch deploy started. Build + restart is running in the background.' });
+      setTimeout(fetchStatus, 2000);
+      setTimeout(fetchStatus, 12000);
+      setTimeout(() => window.location.reload(), 18000);
+    } catch (e) {
+      setActionMessage({ kind: 'error', text: e instanceof Error ? e.message : 'Deploy failed' });
+    }
+    setTimeout(() => setDeploying(false), 2000);
+  };
+
+  const askDeploy = () => {
+    setConfirm({
+      message: 'Deploy Overwatch? This will rebuild the app, restart the service, and the page may disconnect briefly.',
+      action: () => { setConfirm(null); void doDeploy(); },
     });
   };
 
@@ -170,14 +204,14 @@ export default function SystemPage() {
       </div>
 
       {/* Action buttons */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-3 mb-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 mb-5">
         <button
-          onClick={() => askRestart('gateway', 'Hermes Gateway')}
-          disabled={restarting === 'gateway'}
-          className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-sm font-medium text-neutral-200 hover:bg-white/[0.1] hover:border-indigo-500/20 transition-all disabled:opacity-50"
+          onClick={askDeploy}
+          disabled={deploying}
+          className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-indigo-500/[0.12] border border-indigo-500/20 text-sm font-medium text-indigo-200 hover:bg-indigo-500/[0.18] transition-all disabled:opacity-50"
         >
-          <RotateCcw size={14} className={restarting === 'gateway' ? 'animate-spin' : ''} />
-          Restart Gateway
+          <Rocket size={14} className={deploying ? 'animate-pulse' : ''} />
+          Deploy Overwatch
         </button>
         <button
           onClick={() => {
@@ -193,6 +227,14 @@ export default function SystemPage() {
           Restart Overwatch
         </button>
         <button
+          onClick={() => askRestart('gateway', 'Hermes Gateway')}
+          disabled={restarting === 'gateway'}
+          className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-sm font-medium text-neutral-200 hover:bg-white/[0.1] hover:border-indigo-500/20 transition-all disabled:opacity-50"
+        >
+          <RotateCcw size={14} className={restarting === 'gateway' ? 'animate-spin' : ''} />
+          Restart Gateway
+        </button>
+        <button
           onClick={fetchStatus}
           className="flex items-center justify-center gap-2 px-4 py-3 rounded-xl bg-white/[0.03] border border-white/[0.08] text-sm font-medium text-neutral-400 hover:bg-white/[0.1] transition-all"
         >
@@ -200,6 +242,16 @@ export default function SystemPage() {
           Refresh
         </button>
       </div>
+
+      {actionMessage && (
+        <div className={`mb-5 rounded-xl border px-4 py-3 text-sm ${
+          actionMessage.kind === 'success'
+            ? 'border-green-500/20 bg-green-500/5 text-green-300'
+            : 'border-red-500/20 bg-red-500/5 text-red-300'
+        }`}>
+          {actionMessage.text}
+        </div>
+      )}
 
       {loading ? (
         <div className="animate-pulse space-y-4">
@@ -287,6 +339,44 @@ export default function SystemPage() {
                   title="Restart"
                 >
                   <RotateCcw size={13} className={restarting === 'gateway' ? 'animate-spin' : ''} />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-4 px-5 py-3">
+                <StatusDot status={status.overwatch.status} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white">overwatch</p>
+                  <p className="text-[11px] text-neutral-600">
+                    systemd · {status.overwatch.uptime ? `up ${status.overwatch.uptime}` : 'no uptime'} · Next.js on port 3333
+                  </p>
+                </div>
+                <StatusBadge status={status.overwatch.status} />
+                <button
+                  onClick={() => askRestart('overwatch', 'overwatch')}
+                  disabled={restarting === 'overwatch'}
+                  className="p-1.5 rounded-lg text-neutral-600 hover:text-amber-400 hover:bg-amber-400/[0.08] transition-all disabled:opacity-40"
+                  title="Restart"
+                >
+                  <RotateCcw size={13} className={restarting === 'overwatch' ? 'animate-spin' : ''} />
+                </button>
+              </div>
+
+              <div className="flex items-center gap-4 px-5 py-3">
+                <StatusDot status={deploying ? 'running' : (status.overwatchDeploy.status === 'inactive' ? 'unknown' : status.overwatchDeploy.status)} />
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-medium text-white">overwatch-deploy</p>
+                  <p className="text-[11px] text-neutral-600">
+                    transient deploy unit · {deploying ? 'starting…' : (status.overwatchDeploy.uptime ? `up ${status.overwatchDeploy.uptime}` : 'idle')}
+                  </p>
+                </div>
+                <StatusBadge status={deploying ? 'running' : (status.overwatchDeploy.status === 'inactive' ? 'unknown' : status.overwatchDeploy.status)} />
+                <button
+                  onClick={askDeploy}
+                  disabled={deploying}
+                  className="p-1.5 rounded-lg text-neutral-600 hover:text-indigo-300 hover:bg-indigo-500/[0.08] transition-all disabled:opacity-40"
+                  title="Deploy"
+                >
+                  <Rocket size={13} className={deploying ? 'animate-pulse' : ''} />
                 </button>
               </div>
 

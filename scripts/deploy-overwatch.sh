@@ -29,6 +29,7 @@ log "Building Overwatch"
 npm run build
 
 log "Restarting ${SERVICE_NAME}.service"
+systemctl --user reset-failed "${SERVICE_NAME}.service" >/dev/null 2>&1 || true
 systemctl --user restart "${SERVICE_NAME}.service"
 
 log "Waiting for HTTP health on ${HEALTH_URL}"
