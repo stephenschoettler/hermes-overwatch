@@ -3,7 +3,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { execSync } from 'child_process';
 
-const APP_DIR = '/home/w0lf/overwatch';
+const APP_DIR = process.env.OVERWATCH_DIR || process.cwd();
 const DEPLOY_UNIT = 'overwatch-deploy';
 
 export async function POST() {
