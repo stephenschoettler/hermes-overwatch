@@ -25,7 +25,16 @@ Before exposing Overwatch beyond localhost:
 - review the data visible in Memory, Config, and System pages
 - verify screenshots and docs do not include hostnames, local paths, process IDs, session IDs, or token-like strings
 
-This repo intentionally does not ship live dashboard screenshots until they are sanitized.
+Screenshots in this repo are generated from synthetic demo data (see `scripts/seed-demo.py`) — no real session history, keys, or personal data.
+
+---
+
+## Screenshots
+
+![Overview](docs/screenshots/overview.png)
+![Sessions](docs/screenshots/sessions.png)
+![Analytics](docs/screenshots/analytics.png)
+![Activity](docs/screenshots/activity.png)
 
 ---
 
