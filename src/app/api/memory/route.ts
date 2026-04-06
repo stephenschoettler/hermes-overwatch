@@ -2,7 +2,8 @@ export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
 import fs from 'fs';
-import { hermesPath, readHermesYaml } from '@/lib/hermes';
+import { profilePath, readProfileYaml } from '@/lib/hermes';
+import { cookies } from 'next/headers';
 
 interface MemoryConfig {
   memory?: {
@@ -15,9 +16,9 @@ interface MemoryConfig {
   };
 }
 
-function readFile(relativePath: string): string {
+function readFile(profileName: string | undefined, relativePath: string): string {
   try {
-    return fs.readFileSync(hermesPath(relativePath), 'utf-8');
+    return fs.readFileSync(profilePath(profileName, relativePath), 'utf-8');
   } catch {
     return '';
   }
@@ -28,13 +29,17 @@ function parseEntries(content: string): string[] {
   return content.split('§').map(s => s.trim()).filter(Boolean);
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const memoryContent = readFile('memories/MEMORY.md');
-    const userContent = readFile('memories/USER.md');
-    const soulContent = readFile('SOUL.md');
+  const { searchParams } = new URL(req.url);
+  const profileParam = searchParams.get('profile');
+  const cookieStore = await cookies();
+  const profileName = (profileParam && profileParam !== 'system') ? profileParam : cookieStore.get('overwatch-profile')?.value;
+    const memoryContent = readFile(profileName, 'memories/MEMORY.md');
+    const userContent = readFile(profileName, 'memories/USER.md');
+    const soulContent = readFile(profileName, 'SOUL.md');
 
-    const config = readHermesYaml<MemoryConfig>('config.yaml');
+    const config = readProfileYaml<MemoryConfig>(profileName, 'config.yaml');
     const memConfig = config?.memory || {};
 
     const memoryEntries = parseEntries(memoryContent);

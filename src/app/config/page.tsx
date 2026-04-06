@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { ViewContext } from '../layout';
 import {
   Settings, ChevronDown, ChevronRight, Shield, Eye, EyeOff,
   Cpu, Terminal, Palette, Volume2, Mic, Brain, Globe,
@@ -126,6 +127,7 @@ function ConfigSection({ sectionKey, data, defaultOpen = false }: {
 }
 
 export default function ConfigPage() {
+  const { view } = useContext(ViewContext);
   const [data, setData] = useState<ConfigData | null>(null);
   const [loading, setLoading] = useState(true);
   const [showRaw, setShowRaw] = useState(false);
@@ -133,13 +135,13 @@ export default function ConfigPage() {
   useEffect(() => {
     const fetchConfig = async () => {
       try {
-        const res = await fetch('/api/config');
+        const res = await fetch(`/api/config?profile=${encodeURIComponent(view)}`);
         setData(await res.json());
       } catch {}
       setLoading(false);
     };
     fetchConfig();
-  }, []);
+  }, [view]);
 
   if (loading) {
     return (

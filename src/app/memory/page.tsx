@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { ViewContext } from '../layout';
 import {
   Brain, User, Sparkles, FileText, ChevronDown, ChevronUp,
 } from 'lucide-react';
@@ -210,6 +211,7 @@ const TABS: { id: Tab; label: string }[] = [
 ];
 
 export default function MemoryPage() {
+  const { view } = useContext(ViewContext);
   const [data, setData] = useState<MemoryData | null>(null);
   const [contextFiles, setContextFiles] = useState<ContextFile[]>([]);
   const [contextLoading, setContextLoading] = useState(false);
@@ -219,13 +221,13 @@ export default function MemoryPage() {
   useEffect(() => {
     const fetchMemory = async () => {
       try {
-        const res = await fetch('/api/memory');
+        const res = await fetch(`/api/memory?profile=${encodeURIComponent(view)}`);
         setData(await res.json());
       } catch {}
       setLoading(false);
     };
     fetchMemory();
-  }, []);
+  }, [view]);
 
   // Lazy-load context files only when tab is first opened
   useEffect(() => {
@@ -234,7 +236,7 @@ export default function MemoryPage() {
     const fetchContext = async () => {
       setContextLoading(true);
       try {
-        const res = await fetch('/api/context');
+        const res = await fetch(`/api/context?profile=${encodeURIComponent(view)}`);
         const d = await res.json();
         setContextFiles(d.files || []);
       } catch {}

@@ -3,10 +3,11 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import Database from 'better-sqlite3';
 import fs from 'fs';
-import { hermesPath, readHermesYaml, redactSecrets } from '@/lib/hermes';
+import { profilePath, readProfileYaml, redactSecrets } from '@/lib/hermes';
+import { cookies } from 'next/headers';
 
-function getDb(): Database.Database | null {
-  const dbPath = hermesPath('state.db');
+function getDb(profileName?: string): Database.Database | null {
+  const dbPath = profilePath(profileName, 'state.db');
   if (!fs.existsSync(dbPath)) return null;
   return new Database(dbPath, { readonly: true, fileMustExist: true });
 }
@@ -27,7 +28,9 @@ interface DelegationCall {
 }
 
 export async function GET() {
-  const db = getDb();
+  const cookieStore = await cookies();
+  const profileName = cookieStore.get('overwatch-profile')?.value;
+  const db = getDb(profileName);
   if (!db) return NextResponse.json({ error: 'state.db not found' }, { status: 500 });
 
   try {
@@ -91,7 +94,7 @@ export async function GET() {
     db.close();
 
     // Config
-    const config = readHermesYaml<HermesConfig>('config.yaml');
+    const config = readProfileYaml<HermesConfig>(profileName, 'config.yaml');
     const delegationConfig = redactSecrets(config?.delegation || {});
 
     return NextResponse.json({

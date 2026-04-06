@@ -3,10 +3,11 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import Database from 'better-sqlite3';
 import fs from 'fs';
-import { hermesPath } from '@/lib/hermes';
+import { profilePath } from '@/lib/hermes';
+import { cookies } from 'next/headers';
 
-function getDb(): Database.Database | null {
-  const dbPath = hermesPath('state.db');
+function getDb(profileName?: string): Database.Database | null {
+  const dbPath = profilePath(profileName, 'state.db');
   if (!fs.existsSync(dbPath)) return null;
   return new Database(dbPath, { readonly: true, fileMustExist: true });
 }
@@ -37,11 +38,14 @@ interface ActivityEvent {
 }
 
 export async function GET(req: Request) {
-  const db = getDb();
+  const url = new URL(req.url);
+  const profileParam = url.searchParams.get('profile');
+  const cookieStore = await cookies();
+  const profileName = (profileParam && profileParam !== 'system') ? profileParam : cookieStore.get('overwatch-profile')?.value;
+  const db = getDb(profileName);
   if (!db) return NextResponse.json({ error: 'state.db not found' }, { status: 500 });
 
   try {
-    const url = new URL(req.url);
     const hours = Math.min(168, Math.max(1, parseInt(url.searchParams.get('hours') || '24')));
     const limit = Math.min(200, Math.max(10, parseInt(url.searchParams.get('limit') || '100')));
 
@@ -86,7 +90,7 @@ export async function GET(req: Request) {
           timestamp: s.started_at,
           epoch: s.started_epoch,
           source: 'cron',
-          title: `Cron: ${extractCronName(s.id)}`,
+          title: `Cron: ${extractCronName(s.id, profileName)}`,
           detail: `${s.message_count} msgs · ${s.tool_call_count} tools${duration ? ` · ${duration}` : ''} · ${s.end_reason || 'running'}`,
           session_id: s.id,
           model: s.model,
@@ -146,13 +150,13 @@ function formatDuration(seconds: number): string {
 
 // Extract human-readable cron name from job ID in session ID
 // e.g. "cron_35411af1c05b_20260403_150024" -> look up in jobs.json
-function extractCronName(sessionId: string): string {
+function extractCronName(sessionId: string, profileName?: string): string {
   const match = sessionId.match(/^cron_([a-f0-9]+)_/);
   if (!match) return sessionId;
   const jobId = match[1];
 
   try {
-    const jobsFile = fs.readFileSync(hermesPath('cron/jobs.json'), 'utf-8');
+    const jobsFile = fs.readFileSync(profilePath(profileName, 'cron/jobs.json'), 'utf-8');
     const jobs = JSON.parse(jobsFile).jobs as { id: string; name: string }[];
     const job = jobs.find(j => j.id === jobId);
     if (job) return job.name;

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { ViewContext } from '../layout';
 import Link from 'next/link';
 import {
   Zap, Clock, ChevronDown, ChevronRight,
@@ -645,6 +646,7 @@ function MiniStat({ label, value, icon }: { label: string; value: string; icon: 
 // ─── Main Page ───────────────────────────────────────────
 
 export default function AutomationPage() {
+  const { view } = useContext(ViewContext);
   const [tab, setTab] = useState<'crons' | 'delegation' | 'code' | 'delivery'>('crons');
   const [cronsData, setCronsData] = useState<CronsData | null>(null);
   const [channelsData, setChannelsData] = useState<ChannelsData | null>(null);
@@ -655,11 +657,12 @@ export default function AutomationPage() {
   useEffect(() => {
     const fetchAll = async () => {
       try {
+        const p = encodeURIComponent(view);
         const [cronsRes, channelsRes, delegationRes, codeRes] = await Promise.all([
-          fetch('/api/crons'),
-          fetch('/api/automation/channels'),
-          fetch('/api/delegation'),
-          fetch('/api/automation/code-execution'),
+          fetch(`/api/crons?profile=${p}`),
+          fetch(`/api/automation/channels?profile=${p}`),
+          fetch(`/api/delegation?profile=${p}`),
+          fetch(`/api/automation/code-execution?profile=${p}`),
         ]);
         setCronsData(await cronsRes.json());
         setChannelsData(await channelsRes.json());
@@ -671,7 +674,7 @@ export default function AutomationPage() {
     fetchAll();
     const iv = setInterval(fetchAll, 30000);
     return () => clearInterval(iv);
-  }, []);
+  }, [view]);
 
   const jobs = cronsData?.jobs || [];
   const activeJobs = jobs.filter(j => j.enabled);

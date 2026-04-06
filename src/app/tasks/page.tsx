@@ -1,6 +1,7 @@
 'use client';
 
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, useContext } from 'react';
+import { ViewContext } from '../layout';
 import Link from 'next/link';
 import {
   ArrowRight, CheckCircle2, ChevronDown, ChevronRight, CircleSlash, ClipboardList,
@@ -318,6 +319,7 @@ function BoardColumn({ title, status, items, emptyText = 'No tasks' }: { title: 
 }
 
 export default function TasksPage() {
+  const { view } = useContext(ViewContext);
   const [data, setData] = useState<TasksData | null>(null);
   const [loading, setLoading] = useState(true);
   const [query, setQuery] = useState('');
@@ -327,7 +329,7 @@ export default function TasksPage() {
     let mounted = true;
     const fetchTasks = async () => {
       try {
-        const res = await fetch('/api/tasks');
+        const res = await fetch(`/api/tasks?profile=${encodeURIComponent(view)}`);
         const json = await res.json() as TasksData;
         if (mounted) setData(json);
       } catch {}

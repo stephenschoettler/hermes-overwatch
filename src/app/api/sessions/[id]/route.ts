@@ -3,16 +3,42 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import Database from 'better-sqlite3';
 import fs from 'fs';
-import { hermesPath } from '@/lib/hermes';
+import { profilePath, listProfiles } from '@/lib/hermes';
+import { cookies } from 'next/headers';
 
-function getDb(): Database.Database | null {
-  const dbPath = hermesPath('state.db');
+function getDb(profileName?: string): Database.Database | null {
+  const dbPath = profilePath(profileName, 'state.db');
   if (!fs.existsSync(dbPath)) return null;
   return new Database(dbPath, { readonly: true, fileMustExist: true });
 }
 
-export async function GET(_req: Request, { params }: { params: { id: string } }) {
-  const db = getDb();
+export async function GET(req: Request, { params }: { params: { id: string } }) {
+  const { searchParams } = new URL(req.url);
+  const profileParam = searchParams.get('profile');
+  const cookieStore = await cookies();
+  const cookieProfile = cookieStore.get('overwatch-profile')?.value;
+
+  // In system view, search all profile DBs for the session
+  if (profileParam === 'system') {
+    const profiles = listProfiles();
+    for (const p of profiles) {
+      const db = getDb(p.isDefault ? undefined : p.name);
+      if (!db) continue;
+      const row = db.prepare('SELECT 1 FROM sessions WHERE id = ?').get(params.id);
+      db.close();
+      if (row) {
+        return handleSession(params.id, p.isDefault ? undefined : p.name);
+      }
+    }
+    return NextResponse.json({ error: 'Session not found' }, { status: 404 });
+  }
+
+  const profileName = (profileParam && profileParam !== 'system') ? profileParam : cookieProfile;
+  return handleSession(params.id, profileName);
+}
+
+async function handleSession(sessionId: string, profileName?: string) {
+  const db = getDb(profileName);
   if (!db) return NextResponse.json({ error: 'state.db not found' }, { status: 500 });
 
   try {
@@ -26,7 +52,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
         estimated_cost_usd, end_reason, parent_session_id,
         billing_provider
       FROM sessions WHERE id = ?
-    `).get(params.id) as Record<string, unknown> | undefined;
+    `).get(sessionId) as Record<string, unknown> | undefined;
 
     if (!session) {
       db.close();
@@ -52,7 +78,7 @@ export async function GET(_req: Request, { params }: { params: { id: string } })
       FROM messages
       WHERE session_id = ?
       ORDER BY timestamp ASC, id ASC
-    `).all(params.id) as Record<string, unknown>[];
+    `).all(sessionId) as Record<string, unknown>[];
 
     db.close();
 

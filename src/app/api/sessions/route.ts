@@ -3,16 +3,21 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import Database from 'better-sqlite3';
 import fs from 'fs';
-import { hermesPath } from '@/lib/hermes';
+import { profilePath } from '@/lib/hermes';
+import { cookies } from 'next/headers';
 
-function getDb(): Database.Database | null {
-  const dbPath = hermesPath('state.db');
+function getDb(profileName?: string): Database.Database | null {
+  const dbPath = profilePath(profileName, 'state.db');
   if (!fs.existsSync(dbPath)) return null;
   return new Database(dbPath, { readonly: true, fileMustExist: true });
 }
 
 export async function GET(req: Request) {
-  const db = getDb();
+  const { searchParams } = new URL(req.url);
+  const profileParam = searchParams.get('profile');
+  const cookieStore = await cookies();
+  const profileName = (profileParam && profileParam !== 'system') ? profileParam : cookieStore.get('overwatch-profile')?.value;
+  const db = getDb(profileName);
   if (!db) return NextResponse.json({ error: 'state.db not found' }, { status: 500 });
 
   try {

@@ -4,7 +4,8 @@ import { NextResponse } from 'next/server';
 import { execSync } from 'child_process';
 import os from 'os';
 import fs from 'fs';
-import { hermesPath } from '@/lib/hermes';
+import { profilePath, getActiveProfileHome, getGatewayServiceName } from '@/lib/hermes';
+import { cookies } from 'next/headers';
 
 // Redact tokens/keys from strings before sending to client.
 // Matches patterns like: bot tokens (digits:alphanum), bearer tokens, api keys.
@@ -89,19 +90,24 @@ function getHermesDiskUsage(): string {
 }
 
 export async function GET() {
+  const cookieStore = await cookies();
+  const profileName = cookieStore.get('overwatch-profile')?.value;
+  const profileHome = getActiveProfileHome(profileName);
+  const gatewayUnit = getGatewayServiceName(profileHome, profileName);
+
   const totalMem = os.totalmem();
   const freeMem = os.freemem();
   const usedMem = totalMem - freeMem;
   const loadAvg = os.loadavg();
 
-  const gateway = getServiceStatus('hermes-gateway');
+  const gateway = getServiceStatus(gatewayUnit);
   const overwatch = getServiceStatus('overwatch');
   const overwatchDeploy = getServiceStatus('overwatch-deploy.service');
 
   // Gateway process details
   let gatewayProcess: Record<string, unknown> | null = null;
   try {
-    const stateFile = fs.readFileSync(hermesPath('gateway_state.json'), 'utf-8');
+    const stateFile = fs.readFileSync(profilePath(profileName, 'gateway_state.json'), 'utf-8');
     const state = JSON.parse(stateFile);
     if (state.pid) {
       const stat = fs.readFileSync(`/proc/${state.pid}/stat`, 'utf-8').split(' ');
@@ -141,7 +147,7 @@ export async function GET() {
   // state.db size
   let dbSizeMb = 0;
   try {
-    const stat = fs.statSync(hermesPath('state.db'));
+    const stat = fs.statSync(profilePath(profileName, 'state.db'));
     dbSizeMb = Math.round(stat.size / 1024 / 1024 * 10) / 10;
   } catch {}
 
@@ -154,7 +160,7 @@ export async function GET() {
   // Log file sizes
   let logFiles: { name: string; size: string }[] = [];
   try {
-    const logsDir = hermesPath('logs');
+    const logsDir = profilePath(profileName, 'logs');
     if (fs.existsSync(logsDir)) {
       logFiles = fs.readdirSync(logsDir)
         .filter(f => f.endsWith('.log'))

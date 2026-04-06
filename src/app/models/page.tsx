@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { ViewContext } from '../layout';
 import Link from 'next/link';
 import {
   Cpu, MessageSquare, Wrench, Hash, Star, ArrowRight,
@@ -116,19 +117,20 @@ function ModelSparkline({ model, byDay }: { model: string; byDay: DayEntry[] }) 
 }
 
 export default function ModelsPage() {
+  const { view } = useContext(ViewContext);
   const [data, setData] = useState<ModelsData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchModels = async () => {
       try {
-        const res = await fetch('/api/models');
+        const res = await fetch(`/api/models?profile=${encodeURIComponent(view)}`);
         setData(await res.json());
       } catch {}
       setLoading(false);
     };
     fetchModels();
-  }, []);
+  }, [view]);
 
   if (loading) {
     return (

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useContext } from 'react';
+import { ViewContext } from '../layout';
 import Link from 'next/link';
 import {
   Monitor, Search, ChevronLeft, ChevronRight, X, RefreshCw, Clock,
@@ -140,6 +141,7 @@ function LiveClock() {
 /* ─── page ─── */
 
 export default function SessionsPage() {
+  const { view } = useContext(ViewContext);
   const [data, setData] = useState<SessionsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
@@ -153,7 +155,7 @@ export default function SessionsPage() {
 
   const fetchSessions = useCallback(async () => {
     setLoading(true);
-    const params = new URLSearchParams({ page: String(page), limit: '25', sort: sortKey, dir: sortDir });
+    const params = new URLSearchParams({ page: String(page), limit: '25', sort: sortKey, dir: sortDir, profile: view });
     if (source) params.set('source', source);
     if (model) params.set('model', model);
     if (search) params.set('q', search);
@@ -163,7 +165,7 @@ export default function SessionsPage() {
       setData(await res.json());
     } catch {}
     setLoading(false);
-  }, [page, source, model, search, sortKey, sortDir]);
+  }, [page, source, model, search, sortKey, sortDir, view]);
 
   const handleSort = (key: string) => {
     if (key === sortKey) {

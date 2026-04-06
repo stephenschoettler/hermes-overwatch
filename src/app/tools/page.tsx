@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { ViewContext } from '../layout';
 import {
   Wrench, Terminal, FileText, Globe, Brain, Cpu, Zap,
   Search, Plug, MessageSquare, Camera, Code, Users,
@@ -72,6 +73,7 @@ function sourceColor(source: string): string {
 }
 
 export default function ToolsPage() {
+  const { view } = useContext(ViewContext);
   const [data, setData] = useState<ToolsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
@@ -80,13 +82,13 @@ export default function ToolsPage() {
   useEffect(() => {
     const fetchTools = async () => {
       try {
-        const res = await fetch('/api/tools');
+        const res = await fetch(`/api/tools?profile=${encodeURIComponent(view)}`);
         setData(await res.json());
       } catch {}
       setLoading(false);
     };
     fetchTools();
-  }, []);
+  }, [view]);
 
   if (loading || !data) {
     return (

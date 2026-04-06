@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { ViewContext } from '../layout';
 import {
   Plug, Package, CheckCircle, XCircle, AlertTriangle,
   ChevronDown, ChevronRight, FolderOpen, Key, GitBranch,
@@ -150,6 +151,7 @@ function PluginCard({ plugin }: { plugin: PluginInfo }) {
 }
 
 export default function PluginsPage() {
+  const { view } = useContext(ViewContext);
   const [data, setData] = useState<PluginsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('');
@@ -157,13 +159,13 @@ export default function PluginsPage() {
   useEffect(() => {
     const fetchPlugins = async () => {
       try {
-        const res = await fetch('/api/plugins');
+        const res = await fetch(`/api/plugins?profile=${encodeURIComponent(view)}`);
         setData(await res.json());
       } catch {}
       setLoading(false);
     };
     fetchPlugins();
-  }, []);
+  }, [view]);
 
   if (loading || !data) {
     return (

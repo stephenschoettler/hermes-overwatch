@@ -3,7 +3,8 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { getHermesHome } from '@/lib/hermes';
+import { getActiveProfileHome } from '@/lib/hermes';
+import { cookies } from 'next/headers';
 
 const CONTEXT_NAMES = ['.hermes.md', 'HERMES.md', 'AGENTS.md', 'CLAUDE.md', '.cursorrules'];
 const CHAR_LIMIT = 20_000;
@@ -21,7 +22,9 @@ function tryRead(p: string): string | null {
 }
 
 export async function GET() {
-  const hermesHome = getHermesHome();
+  const cookieStore = await cookies();
+  const profileName = cookieStore.get('overwatch-profile')?.value;
+  const hermesHome = getActiveProfileHome(profileName);
   const homeDir = process.env.HOME || path.dirname(hermesHome);
 
   // Directories to probe, in priority order

@@ -4,7 +4,8 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import yaml from 'js-yaml';
-import { hermesPath, readHermesYaml } from '@/lib/hermes';
+import { profilePath, readProfileYaml } from '@/lib/hermes';
+import { cookies } from 'next/headers';
 
 interface PluginManifest {
   name: string;
@@ -79,16 +80,20 @@ function scanPluginDir(baseDir: string, location: 'user' | 'builtin', category =
   return plugins;
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const config = readHermesYaml<HermesConfig>('config.yaml');
+  const { searchParams } = new URL(req.url);
+  const profileParam = searchParams.get('profile');
+  const cookieStore = await cookies();
+  const profileName = (profileParam && profileParam !== 'system') ? profileParam : cookieStore.get('overwatch-profile')?.value;
+    const config = readProfileYaml<HermesConfig>(profileName, 'config.yaml');
     const disabled = new Set(config?.plugins?.disabled || []);
 
     // Scan user plugins
-    const userPlugins = scanPluginDir(hermesPath('plugins'), 'user');
+    const userPlugins = scanPluginDir(profilePath(profileName, 'plugins'), 'user');
 
     // Scan built-in plugins
-    const builtinPlugins = scanPluginDir(hermesPath('hermes-agent/plugins'), 'builtin');
+    const builtinPlugins = scanPluginDir(profilePath(profileName, 'hermes-agent/plugins'), 'builtin');
 
     const allPlugins = [...userPlugins, ...builtinPlugins].map(p => ({
       ...p,

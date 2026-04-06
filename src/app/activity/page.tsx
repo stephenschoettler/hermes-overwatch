@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { ViewContext } from '../layout';
 import Link from 'next/link';
 import {
   Activity, Play, Square, Zap, Radio, MessageSquare, Wrench,
@@ -105,6 +106,7 @@ function formatDay(day: string): string {
 }
 
 export default function ActivityPage() {
+  const { view } = useContext(ViewContext);
   const [data, setData] = useState<ActivityData | null>(null);
   const [hours, setHours] = useState(24);
   const [loading, setLoading] = useState(true);
@@ -113,7 +115,7 @@ export default function ActivityPage() {
     const fetchActivity = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/activity?hours=${hours}&limit=150`);
+        const res = await fetch(`/api/activity?hours=${hours}&limit=150&profile=${encodeURIComponent(view)}`);
         setData(await res.json());
       } catch {}
       setLoading(false);
@@ -121,7 +123,7 @@ export default function ActivityPage() {
     fetchActivity();
     const iv = setInterval(fetchActivity, 30000);
     return () => clearInterval(iv);
-  }, [hours]);
+  }, [hours, view]);
 
   const grouped = data ? groupByDay(data.events) : new Map();
 

@@ -3,10 +3,11 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import Database from 'better-sqlite3';
 import fs from 'fs';
-import { hermesPath, readHermesYaml } from '@/lib/hermes';
+import { profilePath, readProfileYaml } from '@/lib/hermes';
+import { cookies } from 'next/headers';
 
-function getDb(): Database.Database | null {
-  const dbPath = hermesPath('state.db');
+function getDb(profileName?: string): Database.Database | null {
+  const dbPath = profilePath(profileName, 'state.db');
   if (!fs.existsSync(dbPath)) return null;
   return new Database(dbPath, { readonly: true, fileMustExist: true });
 }
@@ -16,8 +17,12 @@ interface HermesConfig {
   mcp_servers?: Record<string, Record<string, unknown>>;
 }
 
-export async function GET() {
-  const db = getDb();
+export async function GET(req: Request) {
+  const { searchParams } = new URL(req.url);
+  const profileParam = searchParams.get('profile');
+  const cookieStore = await cookies();
+  const profileName = (profileParam && profileParam !== 'system') ? profileParam : cookieStore.get('overwatch-profile')?.value;
+  const db = getDb(profileName);
   if (!db) return NextResponse.json({ error: 'state.db not found' }, { status: 500 });
 
   try {
@@ -100,7 +105,7 @@ export async function GET() {
     const totalCalls = tools.reduce((a, t) => a + t.calls, 0);
 
     // Config data
-    const config = readHermesYaml<HermesConfig>('config.yaml');
+    const config = readProfileYaml<HermesConfig>(profileName, 'config.yaml');
     const platformToolsets = config?.platform_toolsets || {};
     const mcpServers = Object.keys(config?.mcp_servers || {});
 

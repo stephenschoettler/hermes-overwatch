@@ -1,11 +1,13 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
 import Link from 'next/link';
+import { ViewContext } from './layout';
 import {
   Monitor, Zap, Puzzle, Brain, MessageSquare, Wrench,
   ArrowRight, Clock, Radio, Server, Play, Square,
- LayoutDashboard,} from 'lucide-react';
+  LayoutDashboard, Layers, User,
+} from 'lucide-react';
 
 interface Stats {
   totals: {
@@ -32,11 +34,18 @@ interface Stats {
     platforms: Record<string, { state?: string; error_message?: string }>;
     process: { uptime?: string; rss_mb?: number } | null;
   };
+  profileGateways?: Array<{
+    name: string; state: string; pid: number | null;
+    platforms: Record<string, { state?: string; error_message?: string }>;
+    process: { uptime?: string; rss_mb?: number } | null;
+    model: string | null; provider: string | null;
+  }>;
   crons: {
     total: number;
     enabled: number;
-    jobs: { name: string; schedule: string; enabled: boolean; lastStatus: string; lastRunAt: string; nextRunAt: string }[];
+    jobs: { name: string; schedule: string; enabled: boolean; lastStatus: string; lastRunAt: string; nextRunAt: string; profile?: string }[];
   };
+  isSystemView?: boolean;
   config: {
     model: string;
     provider: string;
@@ -124,11 +133,12 @@ function ActivityBars({ data }: { data: Stats['dailyActivity'] }) {
 export default function OverviewPage() {
   const [stats, setStats] = useState<Stats | null>(null);
   const [error, setError] = useState('');
+  const { view } = useContext(ViewContext);
 
   useEffect(() => {
     const fetchStats = async () => {
       try {
-        const res = await fetch('/api/stats');
+        const res = await fetch(`/api/stats?profile=${encodeURIComponent(view)}`);
         if (!res.ok) throw new Error('Failed to fetch');
         setStats(await res.json());
       } catch (e) {
@@ -138,7 +148,7 @@ export default function OverviewPage() {
     fetchStats();
     const iv = setInterval(fetchStats, 30000);
     return () => clearInterval(iv);
-  }, []);
+  }, [view]);
 
   if (error) {
     return (
@@ -162,15 +172,24 @@ export default function OverviewPage() {
   }
 
   const gatewayOk = stats.gateway.state === 'running';
+  const isSystem = stats.isSystemView ?? (view === 'system');
 
   return (
     <div className="max-w-5xl mx-auto space-y-5">
-      {/* Header with config info */}
+      {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <div className="flex items-center gap-3"><LayoutDashboard size={20} className="text-purple-400" /><h1 className="text-xl font-bold text-white">Overview</h1></div>
+        <div className="flex items-center gap-3">
+          <LayoutDashboard size={20} className="text-purple-400" />
+          <h1 className="text-xl font-bold text-white">Overview</h1>
         </div>
-
+        <div className={`flex items-center gap-1.5 px-2.5 py-1 rounded-full border text-[11px] font-medium ${
+          isSystem
+            ? 'border-indigo-500/30 bg-indigo-500/10 text-indigo-300'
+            : 'border-purple-500/30 bg-purple-500/10 text-purple-300'
+        }`}>
+          {isSystem ? <Layers size={11} /> : <User size={11} />}
+          {isSystem ? 'All Profiles' : view}
+        </div>
       </div>
 
       {/* Top metric cards */}
@@ -252,11 +271,16 @@ export default function OverviewPage() {
             </Link>
           </div>
           <div className="space-y-2">
-            {stats.crons.jobs.map(j => (
-              <div key={j.name} className="flex items-center justify-between">
-                <div className="min-w-0">
+            {stats.crons.jobs.map((j, i) => (
+              <div key={`${j.name}-${i}`} className="flex items-center justify-between">
+                <div className="min-w-0 flex-1">
                   <p className="text-xs text-neutral-300 truncate">{j.name}</p>
-                  <p className="text-[10px] text-neutral-600">{j.schedule}</p>
+                  <div className="flex items-center gap-1.5">
+                    <p className="text-[10px] text-neutral-600">{j.schedule}</p>
+                    {isSystem && j.profile && (
+                      <span className="text-[9px] px-1 py-0 rounded border border-purple-500/20 text-purple-400 flex-shrink-0">{j.profile}</span>
+                    )}
+                  </div>
                 </div>
                 <div className="flex items-center gap-1.5 flex-shrink-0">
                   <div className={`w-1.5 h-1.5 rounded-full ${j.lastStatus === 'ok' ? 'bg-green-400' : j.lastStatus === 'error' ? 'bg-red-500' : 'bg-neutral-600'}`} />
@@ -334,20 +358,36 @@ export default function OverviewPage() {
         <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-4">
           <p className="text-xs font-medium text-neutral-400 mb-3">System</p>
           <div className="space-y-2.5 text-xs">
-            <SysRow label="Model" value={`${stats.config.model} · ${stats.config.provider}`} />
-            <SysRow label="Gateway" value={gatewayOk ? `PID ${stats.gateway.pid}` : 'offline'} ok={gatewayOk} />
-            {stats.gateway.process?.uptime && (
-              <SysRow label="Uptime" value={stats.gateway.process.uptime} />
+            {isSystem && stats.profileGateways ? (
+              stats.profileGateways.map(pg => (
+                <div key={pg.name}>
+                  <SysRow
+                    label={pg.name}
+                    value={pg.state === 'running' ? `running · PID ${pg.pid}` : pg.state}
+                    ok={pg.state === 'running'}
+                  />
+                  {(pg.model || pg.provider) && (
+                    <p className="text-[10px] text-neutral-600 pl-0 mt-0.5 font-mono">
+                      {[pg.provider, pg.model].filter(Boolean).join(' · ')}
+                    </p>
+                  )}
+                </div>
+              ))
+            ) : (
+              <>
+                <SysRow label="Model" value={`${stats.config.model} · ${stats.config.provider}`} />
+                <SysRow label="Gateway" value={gatewayOk ? `PID ${stats.gateway.pid}` : 'offline'} ok={gatewayOk} />
+                {stats.gateway.process?.uptime && (
+                  <SysRow label="Uptime" value={stats.gateway.process.uptime} />
+                )}
+                {stats.gateway.process?.rss_mb && (
+                  <SysRow label="Memory" value={`${stats.gateway.process.rss_mb} MB`} />
+                )}
+              </>
             )}
             {stats.hermesVersion && stats.hermesVersion !== 'unknown' && (
               <SysRow label="Version" value={`v${stats.hermesVersion}`} />
             )}
-            {stats.gateway.process?.rss_mb && (
-              <SysRow label="Memory" value={`${stats.gateway.process.rss_mb} MB`} />
-            )}
-            {Object.entries(stats.gateway.platforms).map(([name, info]) => (
-              <SysRow key={name} label={name} value={info.state || 'unknown'} ok={info.state === 'connected'} />
-            ))}
             <div className="border-t border-white/[0.06] pt-2 mt-2" />
             <SysRow label="MCP Servers" value={String(stats.config.mcpServers.length)} />
             <SysRow label="state.db" value={`${stats.dbSizeMb} MB`} />

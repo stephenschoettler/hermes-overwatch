@@ -4,7 +4,8 @@ import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
 import matter from 'gray-matter';
-import { hermesPath } from '@/lib/hermes';
+import { profilePath } from '@/lib/hermes';
+import { cookies } from 'next/headers';
 
 interface SkillInfo {
   name: string;
@@ -63,12 +64,16 @@ function hasSubFiles(dir: string): boolean {
 
 export async function GET(req: Request) {
   try {
+  const { searchParams } = new URL(req.url);
+  const profileParam = searchParams.get('profile');
+  const cookieStore = await cookies();
+  const profileName = (profileParam && profileParam !== 'system') ? profileParam : cookieStore.get('overwatch-profile')?.value;
     const url = new URL(req.url);
     const skillPath = url.searchParams.get('path');
 
     // If a specific skill is requested, return its full content
     if (skillPath) {
-      const fullPath = path.join(hermesPath('skills'), skillPath, 'SKILL.md');
+      const fullPath = path.join(profilePath(profileName, 'skills'), skillPath, 'SKILL.md');
       if (!fs.existsSync(fullPath)) {
         return NextResponse.json({ error: 'Skill not found' }, { status: 404 });
       }
@@ -78,7 +83,7 @@ export async function GET(req: Request) {
     }
 
     // Otherwise return the full skill index
-    const skills = walkSkills(hermesPath('skills'));
+    const skills = walkSkills(profilePath(profileName, 'skills'));
 
     // Group by category
     const categories: Record<string, SkillInfo[]> = {};

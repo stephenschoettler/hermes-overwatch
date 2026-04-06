@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { ViewContext } from '../layout';
 import {
   Puzzle, ChevronDown, ChevronRight, Search, X, FolderOpen,
   FileText, Link2,
@@ -88,6 +89,7 @@ function SkillCard({ skill, onSelect }: { skill: SkillInfo; onSelect: (path: str
 }
 
 function SkillDetailPanel({ path, onClose }: { path: string; onClose: () => void }) {
+  const { view } = useContext(ViewContext);
   const [detail, setDetail] = useState<SkillDetail | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -95,13 +97,13 @@ function SkillDetailPanel({ path, onClose }: { path: string; onClose: () => void
     const fetchDetail = async () => {
       setLoading(true);
       try {
-        const res = await fetch(`/api/skills?path=${encodeURIComponent(path)}`);
+        const res = await fetch(`/api/skills?path=${encodeURIComponent(path)}&profile=${encodeURIComponent(view)}`);
         setDetail(await res.json());
       } catch {}
       setLoading(false);
     };
     fetchDetail();
-  }, [path]);
+  }, [path, view]);
 
   return (
     <div className="rounded-xl border border-white/[0.06] bg-white/[0.02] p-5">
@@ -144,6 +146,7 @@ function SkillDetailPanel({ path, onClose }: { path: string; onClose: () => void
 }
 
 export default function SkillsPage() {
+  const { view } = useContext(ViewContext);
   const [data, setData] = useState<SkillsData | null>(null);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
@@ -153,7 +156,7 @@ export default function SkillsPage() {
   useEffect(() => {
     const fetchSkills = async () => {
       try {
-        const res = await fetch('/api/skills');
+        const res = await fetch(`/api/skills?profile=${encodeURIComponent(view)}`);
         const d = await res.json() as SkillsData;
         setData(d);
         // Expand all categories by default
@@ -162,7 +165,7 @@ export default function SkillsPage() {
       setLoading(false);
     };
     fetchSkills();
-  }, []);
+  }, [view]);
 
   const toggleCat = (cat: string) => {
     setExpandedCats(prev => {

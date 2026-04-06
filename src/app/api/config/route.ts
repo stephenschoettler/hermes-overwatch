@@ -1,11 +1,16 @@
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import { readHermesYaml, redactSecrets } from '@/lib/hermes';
+import { readProfileYaml, redactSecrets } from '@/lib/hermes';
+import { cookies } from 'next/headers';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const raw = readHermesYaml<Record<string, unknown>>('config.yaml');
+  const { searchParams } = new URL(req.url);
+  const profileParam = searchParams.get('profile');
+  const cookieStore = await cookies();
+  const profileName = (profileParam && profileParam !== 'system') ? profileParam : cookieStore.get('overwatch-profile')?.value;
+    const raw = readProfileYaml<Record<string, unknown>>(profileName, 'config.yaml');
     if (!raw) {
       return NextResponse.json({ error: 'config.yaml not found' }, { status: 404 });
     }

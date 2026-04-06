@@ -3,7 +3,8 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import fs from 'fs';
 import path from 'path';
-import { hermesPath, readHermesJson } from '@/lib/hermes';
+import { profilePath, readProfileJson } from '@/lib/hermes';
+import { cookies } from 'next/headers';
 
 interface CronJob {
   id: string;
@@ -34,16 +35,20 @@ interface CronFile {
   updated_at: string;
 }
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
-    const cronFile = readHermesJson<CronFile>('cron/jobs.json');
+  const { searchParams } = new URL(req.url);
+  const profileParam = searchParams.get('profile');
+  const cookieStore = await cookies();
+  const profileName = (profileParam && profileParam !== 'system') ? profileParam : cookieStore.get('overwatch-profile')?.value;
+    const cronFile = readProfileJson<CronFile>(profileName, 'cron/jobs.json');
     if (!cronFile) {
       return NextResponse.json({ jobs: [], outputs: {} });
     }
 
     // Get latest output for each job
     const outputs: Record<string, { file: string; content: string; date: string }[]> = {};
-    const outputDir = hermesPath('cron/output');
+    const outputDir = profilePath(profileName, 'cron/output');
 
     for (const job of cronFile.jobs) {
       const jobDir = path.join(outputDir, job.id);

@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { ViewContext } from '../layout';
 import {
   BarChart3, Hash, MessageSquare, Wrench, Clock, TrendingUp,
 } from 'lucide-react';
@@ -214,19 +215,20 @@ function HourlyChart({ data }: { data: HourlyRow[] }) {
 }
 
 export default function AnalyticsPage() {
+  const { view } = useContext(ViewContext);
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const fetchAnalytics = async () => {
       try {
-        const res = await fetch('/api/analytics');
+        const res = await fetch(`/api/analytics?profile=${encodeURIComponent(view)}`);
         setData(await res.json());
       } catch {}
       setLoading(false);
     };
     fetchAnalytics();
-  }, []);
+  }, [view]);
 
   if (loading || !data) {
     return (

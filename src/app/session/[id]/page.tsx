@@ -1,6 +1,7 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useContext } from 'react';
+import { ViewContext } from '../../layout';
 import { useParams } from 'next/navigation';
 import Link from 'next/link';
 import {
@@ -185,6 +186,7 @@ function MessageBlock({ msg, index }: { msg: Message; index: number }) {
 }
 
 export default function SessionDetailPage() {
+  const { view } = useContext(ViewContext);
   const params = useParams();
   const id = params.id as string;
   const [session, setSession] = useState<SessionDetail | null>(null);
@@ -195,7 +197,7 @@ export default function SessionDetailPage() {
   useEffect(() => {
     const fetchSession = async () => {
       try {
-        const res = await fetch(`/api/sessions/${encodeURIComponent(id)}`);
+        const res = await fetch(`/api/sessions/${encodeURIComponent(id)}?profile=${encodeURIComponent(view)}`);
         if (!res.ok) throw new Error(`HTTP ${res.status}`);
         const data = await res.json();
         setSession(data.session);
@@ -206,7 +208,7 @@ export default function SessionDetailPage() {
       setLoading(false);
     };
     fetchSession();
-  }, [id]);
+  }, [id, view]);
 
   if (loading) {
     return (
